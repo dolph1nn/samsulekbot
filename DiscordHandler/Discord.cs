@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Net;
+using AngouriMath;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 
@@ -26,6 +27,7 @@ namespace SSB.Discord
             SocketClient.UserJoined += UserJoinGuildEvent;
             SocketClient.GuildMemberUpdated += GuildMemberUpdatedEvent;
             SocketClient.SlashCommandExecuted += Commands.SlashCommandHandler;
+            SocketClient.MessageReceived += MessageEvent;
             SocketClient.Ready += ReadyEvent;
 
             //await SendStartupMessage("<@1140006616800956529> <@217097093226037249> https://tenor.com/view/sam-sulek-sam-sulek-pump-pound-town-gif-11308748596026110159");
@@ -78,7 +80,7 @@ namespace SSB.Discord
             //await InventoryGuild(SocketClient.GetGuild(170683612092432387));
             await Database.DBHandler.OpenConnection();
             await SendStartupMessage("Connected to Database!", 430528035247095818);
-            await Commands.BuildCommands();
+            //await Commands.BuildCommands();
             return;
         }
 
@@ -118,6 +120,14 @@ namespace SSB.Discord
             if (BeforeRoles.Equals(AfterRoles))
             {
                 await Database.DBHandler.UpdateUserRoles(UserAfter.Id, UserAfter.Guild.Id, AfterRoles);
+            }
+        }
+
+        private static async Task MessageEvent(SocketMessage Message)
+        {
+            if (Regex.IsMatch(Message.Content, "^[0-9+-/().,* ]+$") && !Message.Author.IsBot)
+            {
+                await Message.Channel.SendMessageAsync(((float)((Entity)Message.Content).EvalNumerical()).ToString());
             }
         }
     }
