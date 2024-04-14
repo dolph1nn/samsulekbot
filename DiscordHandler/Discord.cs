@@ -78,6 +78,7 @@ namespace SSB.Discord
             //await InventoryGuild(SocketClient.GetGuild(170683612092432387));
             await Database.DBHandler.OpenConnection();
             await SendStartupMessage("Connected to Database!", 430528035247095818);
+            await Commands.BuildCommands();
             return;
         }
 

@@ -18,9 +18,9 @@ namespace SSB.Discord
             SlashCommandBuilder EvalCommand = new SlashCommandBuilder()
                 .WithName("evaluate")
                 .WithDescription("Evaluates C# code using the Roslyn engine.")
-                .AddOption("code", ApplicationCommandOptionType.String, "The code to evaluate", isRequired: true);
-            //EvalCommand.WithDefaultMemberPermissions(GuildPermission.Administrator);
-            //EvalCommand.WithContextTypes(InteractionContextType.Guild | InteractionContextType.PrivateChannel | InteractionContextType.BotDm);
+                .AddOption("code", ApplicationCommandOptionType.String, "The code to evaluate", isRequired: true)
+                .WithDefaultMemberPermissions(GuildPermission.Administrator)
+                .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel & InteractionContextType.BotDm);
             Console.WriteLine("Before Create");
             try
             {
@@ -57,9 +57,19 @@ namespace SSB.Discord
         /// <returns></returns>
         private static async Task EvaluateCode(SocketSlashCommand command)
         {
-            string code = command.Data.Options.First().Value.ToString();
-            var chan = await command.GetChannelAsync();
-            await chan.SendMessageAsync(code);
+            if (command.User.Id == 170679185650614272)
+            {
+                string code = command.Data.Options.First().Value.ToString();
+                var chan = await command.GetChannelAsync();
+                await chan.SendMessageAsync(code);
+            }
+            else
+            {
+                await command.RespondAsync("WARNING: You have attempted to use a dangerous command only intended for developers." +
+                    "I'll give you the benefit of the doubt that this was a genuine mistake. If you do this again, you will permanently lose access to ALL" +
+                    "of my commands.");
+            }
+
         }
     }
 }
