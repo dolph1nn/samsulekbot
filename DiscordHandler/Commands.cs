@@ -42,7 +42,7 @@ namespace SSB.Discord
             // Let's add a switch statement for the command name so we can handle multiple commands in one event.
             switch (command.Data.Name)
             {
-                case "eval":
+                case "evaluate":
                     await EvaluateCode(command);
                     break;
                 default:
@@ -59,9 +59,7 @@ namespace SSB.Discord
         {
             if (command.User.Id == 170679185650614272)
             {
-                string code = command.Data.Options.First().Value.ToString();
-                var chan = await command.GetChannelAsync();
-                await chan.SendMessageAsync(code);
+                await command.RespondAsync("test");
             }
             else
             {
