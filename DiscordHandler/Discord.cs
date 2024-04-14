@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 
@@ -12,8 +11,11 @@ namespace SSB.Discord
 {
     public static class DiscordHandler
     {
-        private static DiscordSocketClient SocketClient;
+        public static DiscordSocketClient SocketClient;
         private static SSBConfig Config;
+
+        //public static DiscordSocketClient GetClient() {  return SocketClient; }
+        public static SSBConfig GetConfig() {  return Config; }
 
         public static async Task Init()
         {
@@ -23,6 +25,7 @@ namespace SSB.Discord
             await SocketClient.StartAsync();
             SocketClient.UserJoined += UserJoinGuildEvent;
             SocketClient.GuildMemberUpdated += GuildMemberUpdatedEvent;
+            SocketClient.SlashCommandExecuted += Commands.SlashCommandHandler;
             SocketClient.Ready += ReadyEvent;
 
             //await SendStartupMessage("<@1140006616800956529> <@217097093226037249> https://tenor.com/view/sam-sulek-sam-sulek-pump-pound-town-gif-11308748596026110159");
@@ -118,8 +121,8 @@ namespace SSB.Discord
         }
     }
 
-    class SSBConfig
+    public class SSBConfig
     {
-        public String Token;
+        public string Token = String.Empty;
     }
 }
