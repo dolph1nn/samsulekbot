@@ -12,8 +12,8 @@ pool:
 steps:
 - task: mirror-git-repository-vsts-task@1
   inputs:
-    sourceGitRepositoryUri: 'https://devops.lunarcolony.dev/Projects/Sam%20Sulek%20Bot/_git/Sam%20Sulek%20Bot'
+    sourceGitRepositoryUri: 'https://devops.lunarcolony.dev/Projects/SamSulekBot/_git/SamSulekBot'
     sourceGitRepositoryPersonalAccessToken: '$(SrcPat)'
     sourceVerifySSLCertificate: false
-    destinationGitRepositoryUri: 'https://dev.azure.com/swellaby/OpenSource/_git/mirror2'
+    destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
     destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
