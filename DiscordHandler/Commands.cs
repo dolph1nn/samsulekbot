@@ -27,7 +27,7 @@ namespace SSB.Discord
             SlashCommandBuilder ProvisionCommand = new SlashCommandBuilder()
                 .WithName("provision")
                 .WithDescription("Provisions a Guild for use with the bot")
-                .AddOption("guild", ApplicationCommandOptionType.Integer, "The guild to provision (default: this one)", isRequired: true)
+                .AddOption("guild", ApplicationCommandOptionType.String, "The guild to provision (default: this one)", isRequired: true)
                 .WithDefaultMemberPermissions(GuildPermission.Administrator)
                 .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel);
             Console.WriteLine("Before Create");
