@@ -1,0 +1,19 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  name: default
+
+steps:
+- task: mirror-git-repository-vsts-task@1
+  inputs:
+    sourceGitRepositoryUri: 'https://devops.lunarcolony.dev/Projects/Sam%20Sulek%20Bot/_git/Sam%20Sulek%20Bot'
+    sourceGitRepositoryPersonalAccessToken: '$(SrcPat)'
+    sourceVerifySSLCertificate: false
+    destinationGitRepositoryUri: 'https://dev.azure.com/swellaby/OpenSource/_git/mirror2'
+    destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
