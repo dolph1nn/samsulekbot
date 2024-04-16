@@ -34,10 +34,19 @@ namespace SSB.Discord
                 .AddOption("guild", ApplicationCommandOptionType.String, "The guild to provision (default: this one)", isRequired: true)
                 .WithDefaultMemberPermissions(GuildPermission.Administrator)
                 .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel);
+            SlashCommandBuilder AddEmoteCommand = new SlashCommandBuilder()
+                .WithName("addemote")
+                .WithDescription("Adds an emote easily")
+                .AddOption("guild", ApplicationCommandOptionType.String, "The guild to make the emote in (default: this one)", isRequired: false)
+                .AddOption("name", ApplicationCommandOptionType.String, "name of the emote", isRequired: true)
+                .AddOption("url", ApplicationCommandOptionType.String, "url of the emote", isRequired: false)
+                .AddOption("file", ApplicationCommandOptionType.Attachment, "attachment image", isRequired: false)
+                .WithDefaultMemberPermissions(GuildPermission.Administrator)
+                .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel);
             Console.WriteLine("Before Create");
             try
             {
-                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(ProvisionCommand.Build());
+                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(AddEmoteCommand.Build());
 
             }
             catch (HttpException exception)
@@ -67,6 +76,9 @@ namespace SSB.Discord
                     break;
                 case "provision":
                     await ProvisionGuild(command);
+                    break;
+                case "addemote":
+                    await AddEmote(command);
                     break;
                 default:
                     break;
@@ -180,6 +192,16 @@ namespace SSB.Discord
             }
 
             return "[" + prog1 + prog2 + prog3 + prog4 + prog5 + prog6 + prog7 + prog8 + prog9 + prog10 + "]";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        private static async Task AddEmote(SocketSlashCommand command)
+        {
+            Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
         }
 
         /// <summary>
