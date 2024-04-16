@@ -13,6 +13,10 @@ namespace SSB.Discord
 {
     public static class Commands
     {
+        /// <summary>
+        /// This function builds the slash-commands the bot uses. You only need to run this function once per command, usually.
+        /// </summary>
+        /// <returns>task stuff idk</returns>
         public static async Task BuildCommands()
         {
             Console.WriteLine("Start");
@@ -46,6 +50,13 @@ namespace SSB.Discord
             }
             Console.WriteLine("Done!");
         }
+
+        /// <summary>
+        /// Slash Command Handler
+        /// This is what determines which command function to run based on the command name
+        /// </summary>
+        /// <param name="command">This is the actual command object; if we didn't need to pass it onto the command function itself we could only care about the Data.Name Property to determine which command is being ran</param>
+        /// <returns>task stuff idk</returns>
         public static async Task SlashCommandHandler(SocketSlashCommand command)
         {
             // Let's add a switch statement for the command name so we can handle multiple commands in one event.
@@ -62,6 +73,12 @@ namespace SSB.Discord
             }
         }
 
+        /// <summary>
+        /// This is the function for the /provision command
+        /// this provisions a guild for the bot to use certain features
+        /// </summary>
+        /// <param name="command">the command object; here we really only need the param that was ran. we strongly type it as a ulong because the command sees it as a string, and we need it as a ulong to do things</param>
+        /// <returns>task stuff idk</returns>
         private static async Task ProvisionGuild(SocketSlashCommand command)
         {
             ulong GuildID = (ulong)command.Data.Options.First().Value;
@@ -91,7 +108,8 @@ namespace SSB.Discord
                             } 
                             await Database.DBHandler.InsertGuildUserRoles(User.Id, User.Guild.Id, Roles);
                         }
-                        Progress++; ProgressPct = Progress/UserCount; ProvMsg2 = ProvMsg + " " + UpdateProgressBar(ProgressPct) + "("+Progress+" out of " + UserCount + ")";
+                        if (++Progress > UserCount) { Progress = UserCount; } ProgressPct = Progress/UserCount;
+                        ProvMsg2 = ProvMsg + " " + UpdateProgressBar(ProgressPct) + "("+Progress+" out of " + UserCount + ")";
                         await command.ModifyOriginalResponseAsync(msg => msg.Content = ProvMsg2);
                     }
                     ProvMsg2 = ProvMsg2 + "... Finished with Guild!";
@@ -108,8 +126,17 @@ namespace SSB.Discord
             }
         }
 
+        /// <summary>
+        /// this function produces a progress bar that looks like [=   ] [==  ] [=== ] [====]
+        /// based on a float between 0 and 1 - if its over 1 somehow we divide by 100
+        /// any improvements to this function are greatly welcomed
+        /// </summary>
+        /// <param name="pct">the string of the progress bar</param>
+        /// <returns>a string </returns>
         private static string UpdateProgressBar(float pct)
         {
+            if (pct > 1) { pct /= 100; }
+
             string prog1 = "=", prog2 = "=", prog3 = "=", prog4 = "=", prog5 = "=", prog6 = "=", prog7 = "=",prog8 = "=", prog9 = "=", prog10 = "=";
             if (pct < .1)
             {
@@ -151,16 +178,19 @@ namespace SSB.Discord
             {
                 prog10 = " ";
             }
-            string final = "["+prog1+prog2+prog3+prog4+prog5+prog6+prog7+prog8+prog9+prog10+"]"; // [==========]
 
-            return final;
+            return "[" + prog1 + prog2 + prog3 + prog4 + prog5 + prog6 + prog7 + prog8 + prog9 + prog10 + "]";
         }
 
         /// <summary>
         /// THIS IS A VERY DANGEROUS COMMAND/FUNCTION!!!
+        /// This is the function for the Evaulate command.
+        /// I don't think this will work the way I want it to.
+        /// But I'll keep playing with it.
+        /// In theory it lets me run any dynamic C# code using a command; but the rules here are different from JavaScript. It runs in an independent script that, as you can see below, doesn't have all the normal imports of the parent program.
         /// </summary>
-        /// <param name="Code"></param>
-        /// <returns></returns>
+        /// <param name="Code">The code to run.</param>
+        /// <returns>task stuff idk</returns>
         private static async Task EvaluateCode(SocketSlashCommand command)
         {
             if (command.User.Id == 170679185650614272)

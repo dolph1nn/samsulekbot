@@ -19,13 +19,6 @@ namespace SSB.Database
             return;
         }
 
-        private static async Task ExecuteNonQuery(string Query)
-        {
-            SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            await Cmd.ExecuteNonQueryAsync();
-            return;
-        }
-
         public static async Task InsertGuildUserRoles(ulong UserID, ulong GuildID, List<ulong> RoleIDs)
         {
             const string Query = "INSERT INTO roles (userid, guildid, userroles) VALUES (@userid, @guildid, @userroles)";
