@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.CodeAnalysis.Scripting;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace SSB.Discord
 {
@@ -31,7 +33,7 @@ namespace SSB.Discord
             SlashCommandBuilder ProvisionCommand = new SlashCommandBuilder()
                 .WithName("provision")
                 .WithDescription("Provisions a Guild for use with the bot")
-                .AddOption("guild", ApplicationCommandOptionType.String, "The guild to provision (default: this one)", isRequired: true)
+                .AddOption("guild", ApplicationCommandOptionType.String, "The guild to provision (default: this one)", isRequired: false)
                 .WithDefaultMemberPermissions(GuildPermission.Administrator)
                 .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel);
             SlashCommandBuilder AddEmoteCommand = new SlashCommandBuilder()
@@ -46,7 +48,7 @@ namespace SSB.Discord
             Console.WriteLine("Before Create");
             try
             {
-                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(AddEmoteCommand.Build());
+                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(ProvisionCommand.Build());
 
             }
             catch (HttpException exception)
@@ -78,7 +80,7 @@ namespace SSB.Discord
                     await ProvisionGuild(command);
                     break;
                 case "addemote":
-                    await AddEmote(command);
+                    await AddEmoteURL(command);
                     break;
                 default:
                     break;
@@ -93,13 +95,22 @@ namespace SSB.Discord
         /// <returns>task stuff idk</returns>
         private static async Task ProvisionGuild(SocketSlashCommand command)
         {
-            ulong GuildID = (ulong)command.Data.Options.First().Value;
-            SocketGuild Guild = DiscordHandler.SocketClient.GetGuild(GuildID);
-            await command.RespondAsync("Provisioning guild ID " + GuildID + "...");
-            if (Guild == null) 
+            await command.RespondAsync("Starting provision...");
+            //Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
+            //ulong GuildID = Convert.ToUInt64(args["guild"].Value);
+            //Console.Write(GuildID);
+            ulong GuildID = (ulong)command.GuildId;
+            SocketGuild Guild = DiscordHandler.SocketClient.GetGuild((ulong)command.GuildId);
+            await command.ModifyOriginalResponseAsync(msg => msg.Content = "Provisioning guild ID " + GuildID + "...");
+            if (Guild is null)
+            {
+                await command.ModifyOriginalResponseAsync(msg => msg.Content = "Could not find Guild ID " + GuildID + "!");
+            }
+            else
             {
                 if (!Database.DBHandler.CheckGuildExists(GuildID))
                 {
+                    Console.WriteLine("test");
                     await Database.DBHandler.InsertNewGuild(GuildID);
                     const string ProvMsg = "Guild provisioned, now provisioning users...";
                     string ProvMsg2 = ProvMsg;
@@ -132,10 +143,13 @@ namespace SSB.Discord
                     await command.ModifyOriginalResponseAsync(msg => msg.Content = "That guild already exists!");
                 }
             }
-            else
-            {
-                await command.ModifyOriginalResponseAsync(msg => msg.Content = "Could not find Guild ID " + GuildID + "!");
-            }
+        }
+
+        private static async Task Test(SocketSlashCommand command)
+        {
+            Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
+            ulong GuildID = Convert.ToUInt64(args["guild"]);
+            Console.Write(GuildID);
         }
 
         /// <summary>
@@ -194,14 +208,18 @@ namespace SSB.Discord
             return "[" + prog1 + prog2 + prog3 + prog4 + prog5 + prog6 + prog7 + prog8 + prog9 + prog10 + "]";
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        private static async Task AddEmote(SocketSlashCommand command)
+        private static async Task AddEmoteURL(SocketSlashCommand command)
         {
+            await command.RespondAsync("Adding emote...");
             Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
+            await DiscordHandler.SocketClient.GetGuild((ulong)command.GuildId).CreateEmoteAsync((string)args["name"].Value, new Image(new MemoryStream(new WebClient().DownloadData((string)args["url"].Value))));
+            await command.ModifyOriginalResponseAsync(msg => msg.Content = "Added emote " + (string)args["name"].Value + " from URL " + (string)args["url"].Value);
         }
 
         /// <summary>

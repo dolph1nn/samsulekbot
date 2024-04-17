@@ -7,13 +7,14 @@ using Discord;
 using AngouriMath;
 using Discord.WebSocket;
 using Newtonsoft.Json;
+using SSB.Database;
 
 namespace SSB.Discord
 {
     public static class DiscordHandler
     {
         public static DiscordSocketClient SocketClient;
-        private static SSBConfig Config;
+        public static SSBConfig Config;
 
         //public static DiscordSocketClient GetClient() {  return SocketClient; }
         public static SSBConfig GetConfig() {  return Config; }
@@ -25,7 +26,7 @@ namespace SSB.Discord
         public static async Task Init()
         {
             SocketClient = new DiscordSocketClient(new DiscordSocketConfig { /*MessageCacheSize = 100, */GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers });
-            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(@"D:\Projects\samsulekbot\cfg.json"));
+            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(@"D:\Projects\samsulekbot\cfg.json")); // System.Reflection.Assembly.GetExecutingAssembly().Location
             await SocketClient.LoginAsync(TokenType.Bot, Config.Token);
             await SocketClient.StartAsync();
             SocketClient.UserJoined += UserJoinGuildEvent;
@@ -116,9 +117,9 @@ namespace SSB.Discord
             }
             if (!UserBefore.HasValue)
             {
-                if (Database.DBHandler.CheckUserRolesExists(UserAfter.Id, UserAfter.Guild.Id))
+                if (DBHandler.CheckUserRolesExists(UserAfter.Id, UserAfter.Guild.Id))
                 {
-                    BeforeRoles = Database.DBHandler.FetchGuildUserRoles(UserAfter.Id, UserAfter.Guild.Id);
+                    BeforeRoles = DBHandler.FetchGuildUserRoles(UserAfter.Id, UserAfter.Guild.Id);
                 }
             }
             else
@@ -130,7 +131,7 @@ namespace SSB.Discord
             }
             if (!BeforeRoles.Equals(AfterRoles))
             {
-                await Database.DBHandler.UpdateUserRoles(UserAfter.Id, UserAfter.Guild.Id, AfterRoles);
+                await DBHandler.UpdateUserRoles(UserAfter.Id, UserAfter.Guild.Id, AfterRoles);
             }
         }
 
@@ -150,11 +151,20 @@ namespace SSB.Discord
             }
         }
     }
+
     /// <summary>
     /// This is the class for the Config file.
     /// </summary>
     public class SSBConfig
     {
-        public string Token = String.Empty;
+        public string Token { get; set; } = String.Empty;
+        public string DBDriver { get; set; } = String.Empty;
+        public string DBHostname { get; set; } = String.Empty;
+        public string DBDatabase { get; set; } = String.Empty;
+        public string DBPort { get; set; } = String.Empty;
+        public bool DBSSL { get; set; } = false;
+        public bool DBAuthType { get; set; } = false;
+        public string DBUsername { get; set; } = String.Empty;
+        public string DBPassword { get; set; } = String.Empty;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -31,7 +32,7 @@ namespace SSB.Database
         }
         public static List<ulong> FetchGuildUserRoles(ulong UserID, ulong GuildID)
         {
-            const string Query = "SELECT userroles FROM roles WHERE userid = @userid AND guildid = @guildid LIMIT 1";
+            const string Query = "SELECT userroles FROM roles WHERE userid = @userid AND guildid = @guildid";
             string JsonString = "{}";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@userid", UserID);
@@ -59,7 +60,7 @@ namespace SSB.Database
 
         public static bool CheckUserRolesExists(ulong UserID, ulong GuildID)
         {
-            const string Query = "SELECT COUNT(*) FROM roles WHERE userid = @userid AND guildid = @guildid LIMIT 1";
+            const string Query = "SELECT COUNT(*) FROM roles WHERE userid = @userid AND guildid = @guildid";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@userid", UserID);
             Cmd.Parameters.AddWithValue("@guildid", GuildID);
@@ -80,13 +81,18 @@ namespace SSB.Database
 
         public static bool CheckGuildExists(ulong GuildID)
         {
-            string Query = "SELECT COUNT(*) FROM guilds WHERE guildid = @guildid LIMIT 1";
+            string Query = "SELECT COUNT(*) FROM guilds WHERE guildid = @guildid";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@guildid", GuildID);
             using (SqlDataReader reader = Cmd.ExecuteReader())
             {
-                return reader.HasRows;
+                while (reader.Read())
+                {
+                    if (reader.GetInt32(0) == 0) { return false; }
+                    else if (reader.GetInt32(0) == 1) { return true; }
+                }
             }
+            return false;
         }
     }
 }
