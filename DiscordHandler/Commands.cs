@@ -108,7 +108,9 @@ namespace SSB.Discord
             }
             else
             {
-                if (!Database.DBHandler.CheckGuildExists(GuildID))
+                bool tasdasd = !Database.DBHandler.CheckGuildExists(GuildID);
+                Console.WriteLine(tasdasd);
+                if (tasdasd)
                 {
                     Console.WriteLine("test");
                     await Database.DBHandler.InsertNewGuild(GuildID);
@@ -143,13 +145,6 @@ namespace SSB.Discord
                     await command.ModifyOriginalResponseAsync(msg => msg.Content = "That guild already exists!");
                 }
             }
-        }
-
-        private static async Task Test(SocketSlashCommand command)
-        {
-            Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
-            ulong GuildID = Convert.ToUInt64(args["guild"]);
-            Console.Write(GuildID);
         }
 
         /// <summary>

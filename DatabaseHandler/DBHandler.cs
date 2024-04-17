@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace SSB.Database
 {
-    public class DBHandler
+    public static class DBHandler
     {
         private static string hostname = "2019-SRV14.lunarcolony.local";
         private static string dbname = "ssbd";

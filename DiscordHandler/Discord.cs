@@ -16,7 +16,6 @@ namespace SSB.Discord
         public static DiscordSocketClient SocketClient;
         public static SSBConfig Config;
 
-        //public static DiscordSocketClient GetClient() {  return SocketClient; }
         public static SSBConfig GetConfig() {  return Config; }
 
         /// <summary>
