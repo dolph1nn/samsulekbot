@@ -25,7 +25,7 @@ namespace SSB.Discord
         public static async Task Init()
         {
             SocketClient = new DiscordSocketClient(new DiscordSocketConfig { /*MessageCacheSize = 100, */GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers });
-            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(@"D:\Projects\samsulekbot\cfg.json")); // System.Reflection.Assembly.GetExecutingAssembly().Location
+            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(@"c:\ssb\cfg.json")); // System.Reflection.Assembly.GetExecutingAssembly().Location + 
             await SocketClient.LoginAsync(TokenType.Bot, Config.Token);
             await SocketClient.StartAsync();
             SocketClient.UserJoined += UserJoinGuildEvent;
@@ -74,7 +74,7 @@ namespace SSB.Discord
         private static async Task ReadyEvent()
         {
             Console.WriteLine("Bot is connected!");
-            await Database.DBHandler.OpenConnection();
+            await DBHandler.OpenConnection();
             await SendStartupMessage("Connected to Database!", 430528035247095818);
             // Uncomment this line to provision any commands you need/want to.
             //await Commands.BuildCommands();
@@ -89,13 +89,13 @@ namespace SSB.Discord
         /// <returns></returns>
         private static async Task UserJoinGuildEvent(SocketGuildUser User)
         {
-            if (Database.DBHandler.CheckUserRolesExists(User.Id, User.Guild.Id))
+            if (DBHandler.CheckUserRolesExists(User.Id, User.Guild.Id))
             {
-                await User.AddRolesAsync(Database.DBHandler.FetchGuildUserRoles(User.Id, User.Guild.Id));
+                await User.AddRolesAsync(DBHandler.FetchGuildUserRoles(User.Id, User.Guild.Id));
             } 
             else
             {
-                await Database.DBHandler.InsertGuildUserRoles(User.Id, User.Guild.Id, new List<ulong>());
+                await DBHandler.InsertGuildUserRoles(User.Id, User.Guild.Id, new List<ulong>());
             }
         }
 
