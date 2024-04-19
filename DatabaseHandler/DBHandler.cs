@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SSB.Core;
 
 namespace SSB.Database
 {
     public static class DBHandler
     {
-        private static string hostname = "2019-SRV14.lunarcolony.local";
-        private static string dbname = "ssbd";
-        private static SqlConnection SqlConn;
+        private static SqlConnection SqlConn { get; set; }
 
-        public static async Task OpenConnection()
+        public static async Task OpenConnection(SSBConfig Config)
         {
-            string ConnStr = "Data Source=" + hostname + ";Initial Catalog=" + dbname + ";Integrated Security=SSPI"/*+ ";Encrypt=true"*/;
+            string ConnStr = "Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI"+ ";Encrypt=" + Config.DBSSL.ToString().ToLower();
+            Console.WriteLine(ConnStr);
             SqlConn = new SqlConnection(ConnStr);
             await SqlConn.OpenAsync();
             return;

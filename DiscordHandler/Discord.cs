@@ -8,6 +8,7 @@ using AngouriMath;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 using SSB.Database;
+using SSB.Core;
 
 namespace SSB.Discord
 {
@@ -23,7 +24,7 @@ namespace SSB.Discord
         public static async Task Init()
         {
             SocketClient = new DiscordSocketClient(new DiscordSocketConfig { /*MessageCacheSize = 100, */GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers });
-            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(@"c:\ssb\cfg.json")); // System.Reflection.Assembly.GetExecutingAssembly().Location + 
+            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\cfg.json")); //File.ReadAllText(@"c:\ssb\cfg.json")
             await SocketClient.LoginAsync(TokenType.Bot, Config.Token);
             await SocketClient.StartAsync();
             SocketClient.UserJoined += UserJoinGuildEvent;
@@ -72,7 +73,7 @@ namespace SSB.Discord
         private static async Task ReadyEvent()
         {
             Console.WriteLine("Bot is connected!");
-            await DBHandler.OpenConnection();
+            await DBHandler.OpenConnection(Config);
             await SendStartupMessage("Connected to Database!", 430528035247095818);
             // Uncomment this line to provision any commands you need/want to.
             //await Commands.BuildCommands();
@@ -152,7 +153,7 @@ namespace SSB.Discord
     /// <summary>
     /// This is the class for the Config file.
     /// </summary>
-    public class SSBConfig
+    /*public class SSBConfig
     {
         public string Token { get; set; } = String.Empty;
         public string DBDriver { get; set; } = String.Empty;
@@ -163,5 +164,5 @@ namespace SSB.Discord
         public bool DBAuthType { get; set; } = false;
         public string DBUsername { get; set; } = String.Empty;
         public string DBPassword { get; set; } = String.Empty;
-    }
+    }*/
 }

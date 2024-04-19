@@ -1,3 +1,11 @@
 {
-	"Token": "ChangeMe"
+	"Token": "ChangeMe",
+	"DBDriver": "MSSQL",
+	"DBHostname": "asdf",
+	"DBDatabase": "asdf",
+	"DBPort": 1433,
+	"DBSSL": false,
+	"DBAuthType": false,
+	"DBUsername": "asdf",
+	"DBPassword": "asdf"
 }
