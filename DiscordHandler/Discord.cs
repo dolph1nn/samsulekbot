@@ -13,10 +13,8 @@ namespace SSB.Discord
 {
     public static class DiscordHandler
     {
-        public static DiscordSocketClient SocketClient;
-        public static SSBConfig Config;
-
-        public static SSBConfig GetConfig() {  return Config; }
+        public static DiscordSocketClient SocketClient { get; private set; }
+        public static SSBConfig Config {  get; private set; }
 
         /// <summary>
         /// starts the discord handler
