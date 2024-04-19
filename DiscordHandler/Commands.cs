@@ -98,7 +98,6 @@ namespace SSB.Discord
             await command.RespondAsync("Starting provision...");
             //Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
             //ulong GuildID = Convert.ToUInt64(args["guild"].Value);
-            //Console.Write(GuildID);
             ulong GuildID = (ulong)command.GuildId;
             SocketGuild Guild = DiscordHandler.SocketClient.GetGuild((ulong)command.GuildId);
             await command.ModifyOriginalResponseAsync(msg => msg.Content = "Provisioning guild ID " + GuildID + "...");
@@ -108,18 +107,16 @@ namespace SSB.Discord
             }
             else
             {
-                bool tasdasd = !Database.DBHandler.CheckGuildExists(GuildID);
-                Console.WriteLine(tasdasd);
-                if (tasdasd)
+                Task<bool> tasdasd = Database.DBHandler.CheckGuildExists(GuildID);
+                if (!tasdasd.Result)
                 {
-                    Console.WriteLine("test");
                     await Database.DBHandler.InsertNewGuild(GuildID);
                     const string ProvMsg = "Guild provisioned, now provisioning users...";
                     string ProvMsg2 = ProvMsg;
                     await command.ModifyOriginalResponseAsync(msg => msg.Content = ProvMsg2);
                     int UserCount = Guild.MemberCount, Progress = 0;
                     float ProgressPct;
-                    foreach(SocketGuildUser User in Guild.Users)
+                    foreach (SocketGuildUser User in Guild.Users)
                     {
                         if (!User.IsBot)
                         {

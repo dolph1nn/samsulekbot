@@ -15,7 +15,7 @@ namespace SSB.Discord
     public static class DiscordHandler
     {
         public static DiscordSocketClient SocketClient { get; private set; }
-        public static SSBConfig Config {  get; private set; }
+        public static SSBConfig Config { get; private set; }
 
         /// <summary>
         /// starts the discord handler
@@ -23,7 +23,7 @@ namespace SSB.Discord
         /// <returns>task stuff idk</returns>
         public static async Task Init()
         {
-            SocketClient = new DiscordSocketClient(new DiscordSocketConfig { /*MessageCacheSize = 100, */GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers });
+            SocketClient = new DiscordSocketClient(new DiscordSocketConfig { /*MessageCacheSize = 100, */GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.Guilds });
             Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\cfg.json")); //File.ReadAllText(@"c:\ssb\cfg.json")
             await SocketClient.LoginAsync(TokenType.Bot, Config.Token);
             await SocketClient.StartAsync();
@@ -75,6 +75,7 @@ namespace SSB.Discord
             Console.WriteLine("Bot is connected!");
             await DBHandler.OpenConnection(Config);
             await SendStartupMessage("Connected to Database!", 430528035247095818);
+            await SocketClient.GetGuild(170683612092432387).DownloadUsersAsync();
             // Uncomment this line to provision any commands you need/want to.
             //await Commands.BuildCommands();
             return;

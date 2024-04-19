@@ -14,7 +14,6 @@ namespace SSB.Database
         public static async Task OpenConnection(SSBConfig Config)
         {
             string ConnStr = "Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI"+ ";Encrypt=" + Config.DBSSL.ToString().ToLower();
-            Console.WriteLine(ConnStr);
             SqlConn = new SqlConnection(ConnStr);
             await SqlConn.OpenAsync();
             return;
@@ -22,11 +21,11 @@ namespace SSB.Database
 
         public static async Task InsertGuildUserRoles(ulong UserID, ulong GuildID, List<ulong> RoleIDs)
         {
-            const string Query = "INSERT INTO roles (userid, guildid, userroles) VALUES (@userid, @guildid, @userroles)";
+            const string Query = "INSERT INTO roles (userid, guildid, roles) VALUES (@UserID, @GuildID, @UserRoles)";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            Cmd.Parameters.AddWithValue("@userid", UserID);
-            Cmd.Parameters.AddWithValue("@guildid", GuildID);
-            Cmd.Parameters.AddWithValue("@userroles", JsonConvert.SerializeObject(RoleIDs));
+            Cmd.Parameters.AddWithValue("@UserID", (long)UserID);
+            Cmd.Parameters.AddWithValue("@GuildID", (long)GuildID);
+            Cmd.Parameters.AddWithValue("@UserRoles", JsonConvert.SerializeObject(RoleIDs));
             await Cmd.ExecuteNonQueryAsync();
             return;
         }
@@ -35,8 +34,8 @@ namespace SSB.Database
             const string Query = "SELECT userroles FROM roles WHERE userid = @userid AND guildid = @guildid";
             string JsonString = "{}";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            Cmd.Parameters.AddWithValue("@userid", UserID);
-            Cmd.Parameters.AddWithValue("@guildid", GuildID);
+            Cmd.Parameters.AddWithValue("@userid", (long)UserID);
+            Cmd.Parameters.AddWithValue("@guildid", (long)GuildID);
             using (SqlDataReader reader = Cmd.ExecuteReader())
             {
                 if (reader.HasRows)
@@ -51,8 +50,8 @@ namespace SSB.Database
         {
             const string Query = "UPDATE roles SET userroles = @userroles WHERE userid = @userid AND guildid = @guildid)";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            Cmd.Parameters.AddWithValue("@userid", UserID);
-            Cmd.Parameters.AddWithValue("@guildid", GuildID);
+            Cmd.Parameters.AddWithValue("@userid", (long)UserID);
+            Cmd.Parameters.AddWithValue("@guildid", (long)GuildID);
             Cmd.Parameters.AddWithValue("@userroles", JsonConvert.SerializeObject(RoleIDs));
             await Cmd.ExecuteNonQueryAsync();
             return;
@@ -62,8 +61,8 @@ namespace SSB.Database
         {
             const string Query = "SELECT COUNT(*) FROM roles WHERE userid = @userid AND guildid = @guildid";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            Cmd.Parameters.AddWithValue("@userid", UserID);
-            Cmd.Parameters.AddWithValue("@guildid", GuildID);
+            Cmd.Parameters.AddWithValue("@userid", (long)UserID);
+            Cmd.Parameters.AddWithValue("@guildid", (long)GuildID);
             using (SqlDataReader reader = Cmd.ExecuteReader())
             {
                 return reader.HasRows;
@@ -72,27 +71,33 @@ namespace SSB.Database
 
         public static async Task InsertNewGuild(ulong GuildID)
         {
-            const string Query = "INSERT INTO guilds (guildid, status) VALUES (@guildid, 1)";
+            const string Query = "INSERT INTO guilds (guildid, status) VALUES (@GuildID, 1)";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            Cmd.Parameters.AddWithValue("@guildid", GuildID);
+            Cmd.Parameters.AddWithValue("@GuildID", (long)GuildID);
             await Cmd.ExecuteNonQueryAsync();
             return;
         }
 
-        public static bool CheckGuildExists(ulong GuildID)
+        public static async Task<bool> CheckGuildExists(ulong GuildID)
         {
-            string Query = "SELECT COUNT(*) FROM guilds WHERE guildid = @guildid";
+            bool exists = false;
+            string Query = "SELECT * FROM guilds WHERE guildid = @GuildID";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
-            Cmd.Parameters.AddWithValue("@guildid", GuildID);
-            using (SqlDataReader reader = Cmd.ExecuteReader())
+            Cmd.Parameters.AddWithValue("@GuildID", (Int64)GuildID);
+            try
             {
-                while (reader.Read())
+                using (SqlDataReader reader = await Cmd.ExecuteReaderAsync())
                 {
-                    if (reader.GetInt32(0) == 0) { return false; }
-                    else if (reader.GetInt32(0) == 1) { return true; }
+                    exists = reader.HasRows;
                 }
             }
-            return false;
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            
+            return exists;
         }
     }
 }
