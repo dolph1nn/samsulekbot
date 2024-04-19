@@ -2,6 +2,9 @@
 
 namespace SSB.Core
 {
+    /// <summary>
+    /// This is the class for the Config file.
+    /// </summary>
     public class SSBConfig
     {
         public string Token { get; set; } = String.Empty;
