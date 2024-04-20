@@ -47,7 +47,14 @@ steps:
   inputs:
     SourceFolder: '$(BinariesDirectory)'
     Contents: '**/*.{xml,pdb}'
- 
+
+# Copy cfg template
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.Repository.LocalPath)'
+    Contents: '**/cfg.template.json'
+    TargetFolder: '$(BinariesDirectory)'
+
 # Create release_all.7z file
 # This includes all binaries and additional languages.
 - task: ArchiveFiles@2
