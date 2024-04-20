@@ -17,3 +17,24 @@ steps:
     sourceVerifySSLCertificate: false
     destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
     destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
+
+- task: DotNetCoreCLI@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+- task: DotNetCoreCLI@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(BinariesDirectory)'
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: 'tar'
+    archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).zip'
+    replaceExistingArchive: true
