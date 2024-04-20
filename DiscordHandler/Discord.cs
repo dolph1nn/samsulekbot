@@ -48,8 +48,6 @@ namespace SSB.Discord
             SocketClient.SlashCommandExecuted += Commands.SlashCommandHandler;
             SocketClient.MessageReceived += MessageEvent;
             SocketClient.Ready += ReadyEvent;
-
-            //await SendStartupMessage("<@1140006616800956529> <@217097093226037249> https://tenor.com/view/sam-sulek-sam-sulek-pump-pound-town-gif-11308748596026110159");
             await Task.Delay(-1);
         }
 

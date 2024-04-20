@@ -49,7 +49,7 @@ namespace SSB.Discord
             SlashCommandBuilder ProvisionCommand = new SlashCommandBuilder()
                 .WithName("provision")
                 .WithDescription("Provisions a Guild for use with the bot")
-                .AddOption("guild", ApplicationCommandOptionType.String, "The guild to provision (default: this one)", isRequired: false)
+                //.AddOption("guild", ApplicationCommandOptionType.String, "The guild to provision (default: this one)", isRequired: false)
                 .WithDefaultMemberPermissions(GuildPermission.Administrator)
                 .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel);
             SlashCommandBuilder AddEmoteCommand = new SlashCommandBuilder()
@@ -111,7 +111,7 @@ namespace SSB.Discord
         /// <returns>task stuff idk</returns>
         private static async Task ProvisionGuild(SocketSlashCommand command)
         {
-            await command.RespondAsync("Starting provision...");
+            await command.DeferAsync();
             //Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
             //ulong GuildID = Convert.ToUInt64(args["guild"].Value);
             ulong GuildID = (ulong)command.GuildId;
@@ -224,7 +224,7 @@ namespace SSB.Discord
         /// <returns></returns>
         private static async Task AddEmoteURL(SocketSlashCommand command)
         {
-            await command.RespondAsync("Adding emote...");
+            await command.DeferAsync();
             Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
             await DiscordHandler.SocketClient.GetGuild((ulong)command.GuildId).CreateEmoteAsync((string)args["name"].Value, new Image(new MemoryStream(new WebClient().DownloadData((string)args["url"].Value))));
             await command.ModifyOriginalResponseAsync(msg => msg.Content = "Added emote " + (string)args["name"].Value + " from URL " + (string)args["url"].Value);
@@ -242,17 +242,18 @@ namespace SSB.Discord
         /// <returns>task stuff idk</returns>
         private static async Task EvaluateCode(SocketSlashCommand command)
         {
+            await command.DeferAsync();
             if (command.User.Id == 170679185650614272)
             {
                 string[] Imports = new string[] { "System", "Discord", "Discord.Net", "Discord.Websocket"};
                 //await command.RespondAsync("Evaluating...");
                 string Code = command.Data.Options.First().Value.ToString();
                 string fin = await CSharpScript.EvaluateAsync<string>(Code, ScriptOptions.Default.WithImports(Imports), DiscordHandler.SocketClient);
-                await command.RespondAsync(fin);
+                await command.ModifyOriginalResponseAsync(msg => msg.Content = fin);
             }
             else
             {
-                await command.RespondAsync("WARNING: You have attempted to use a dangerous command only intended for developers." +
+                await command.ModifyOriginalResponseAsync(msg => msg.Content = "WARNING: You have attempted to use a dangerous command only intended for developers." +
                     "I'll give you the benefit of the doubt that this was a genuine mistake. If you do this again, you will permanently lose access to ALL" +
                     "of my commands.");
             }
