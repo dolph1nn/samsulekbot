@@ -105,7 +105,7 @@ namespace SSB.Discord
         /// <returns></returns>
         private static async Task UserJoinGuildEvent(SocketGuildUser User)
         {
-            if (DBHandler.CheckUserRolesExists(User.Id, User.Guild.Id))
+            if (await DBHandler.CheckUserRolesExists(User.Id, User.Guild.Id))
             {
                 await User.AddRolesAsync(await DBHandler.FetchGuildUserRoles(User.Id, User.Guild.Id));
             } 
@@ -132,7 +132,7 @@ namespace SSB.Discord
             }
             if (!UserBefore.HasValue)
             {
-                if (DBHandler.CheckUserRolesExists(UserAfter.Id, UserAfter.Guild.Id))
+                if (await DBHandler.CheckUserRolesExists(UserAfter.Id, UserAfter.Guild.Id))
                 {
                     BeforeRoles = await DBHandler.FetchGuildUserRoles(UserAfter.Id, UserAfter.Guild.Id);
                 }

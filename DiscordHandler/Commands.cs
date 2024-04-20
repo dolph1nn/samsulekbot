@@ -236,6 +236,7 @@ namespace SSB.Discord
         /// I don't think this will work the way I want it to.
         /// But I'll keep playing with it.
         /// In theory it lets me run any dynamic C# code using a command; but the rules here are different from JavaScript. It runs in an independent script that, as you can see below, doesn't have all the normal imports of the parent program.
+        /// UPDATE: This can be fixed with the 3rd parameter to the method - globals
         /// </summary>
         /// <param name="Code">The code to run.</param>
         /// <returns>task stuff idk</returns>
@@ -246,7 +247,7 @@ namespace SSB.Discord
                 string[] Imports = new string[] { "System", "Discord", "Discord.Net", "Discord.Websocket"};
                 //await command.RespondAsync("Evaluating...");
                 string Code = command.Data.Options.First().Value.ToString();
-                string fin = await CSharpScript.EvaluateAsync<string>(Code, ScriptOptions.Default.WithImports("System"));
+                string fin = await CSharpScript.EvaluateAsync<string>(Code, ScriptOptions.Default.WithImports(Imports), DiscordHandler.SocketClient);
                 await command.RespondAsync(fin);
             }
             else

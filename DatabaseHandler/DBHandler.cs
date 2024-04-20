@@ -73,16 +73,25 @@ namespace SSB.Database
             return;
         }
 
-        public static bool CheckUserRolesExists(ulong UserID, ulong GuildID)
+        public static async Task<bool> CheckUserRolesExists(ulong UserID, ulong GuildID)
         {
+            bool exists = false;
             const string Query = "SELECT COUNT(*) FROM roles WHERE userid = @userid AND guildid = @guildid";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@userid", (long)UserID);
             Cmd.Parameters.AddWithValue("@guildid", (long)GuildID);
-            using (SqlDataReader reader = Cmd.ExecuteReader())
+            try
             {
-                return reader.HasRows;
+                using (SqlDataReader reader = await Cmd.ExecuteReaderAsync())
+                {
+                    exists = reader.HasRows;
+                }
             }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return exists;
         }
 
         public static async Task InsertNewGuild(ulong GuildID)
@@ -111,8 +120,6 @@ namespace SSB.Database
             {
                 Console.WriteLine(ex.Message);
             }
-
-            
             return exists;
         }
     }
