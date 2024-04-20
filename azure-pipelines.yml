@@ -21,16 +21,9 @@ steps:
 - task: DotNetCoreCLI@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
-    feedsToUse: 'select'
-    restoreDirectory: $(NuGetTemp)
-- task: DotNetCoreCLI@2
-  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
-  inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(BinariesDirectory) --source $(NuGetTemp)'
+    arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory)'
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
