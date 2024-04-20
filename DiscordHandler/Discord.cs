@@ -160,7 +160,11 @@ namespace SSB.Discord
         {
             if (Regex.IsMatch(Message.Content, "^[0-9+-/().,* ]+$") && !Message.Author.IsBot)
             {
-                await Message.Channel.SendMessageAsync(((float)((Entity)Message.Content).EvalNumerical()).ToString());
+                float Result = (float)((Entity)Message.Content).EvalNumerical();
+                if (!Message.Content.Equals(Result.ToString()))
+                {
+                    await Message.Channel.SendMessageAsync(Result.ToString());
+                }
             }
         }
     }
