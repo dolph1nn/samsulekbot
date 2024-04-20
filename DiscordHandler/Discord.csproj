@@ -151,9 +151,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Config\Config.csproj">
-      <Project>{71028e3f-1fca-431d-aa50-55a107fab928}</Project>
-      <Name>Config</Name>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{c8461cef-c28b-4887-93ee-3fd050ee8842}</Project>
+      <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\DatabaseHandler\Database.csproj">
       <Project>{da1a1a28-266b-4665-8d1a-33a77953d9af}</Project>
