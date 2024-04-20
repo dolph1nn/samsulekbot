@@ -110,7 +110,7 @@ steps:
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
     SourceFolder: '$(BinariesDirectory)'
-    Contents: '**/SSB.Service.*'
+    Contents: '**/{SSB.Service,cfg.template}.*'
 
 # Create release_lib.7z file
 # This contains library binaries only.
