@@ -23,7 +23,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory) --source $(NuGetTemp)'
+    arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory)'
 
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
