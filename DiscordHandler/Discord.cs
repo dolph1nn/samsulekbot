@@ -91,7 +91,7 @@ namespace SSB.Discord
         {
             if (DBHandler.CheckUserRolesExists(User.Id, User.Guild.Id))
             {
-                await User.AddRolesAsync(DBHandler.FetchGuildUserRoles(User.Id, User.Guild.Id));
+                await User.AddRolesAsync(await DBHandler.FetchGuildUserRoles(User.Id, User.Guild.Id));
             } 
             else
             {
@@ -118,7 +118,7 @@ namespace SSB.Discord
             {
                 if (DBHandler.CheckUserRolesExists(UserAfter.Id, UserAfter.Guild.Id))
                 {
-                    BeforeRoles = DBHandler.FetchGuildUserRoles(UserAfter.Id, UserAfter.Guild.Id);
+                    BeforeRoles = await DBHandler.FetchGuildUserRoles(UserAfter.Id, UserAfter.Guild.Id);
                 }
             }
             else

@@ -29,17 +29,18 @@ namespace SSB.Database
             await Cmd.ExecuteNonQueryAsync();
             return;
         }
-        public static List<ulong> FetchGuildUserRoles(ulong UserID, ulong GuildID)
+        public static async Task<List<ulong>> FetchGuildUserRoles(ulong UserID, ulong GuildID)
         {
             const string Query = "SELECT userroles FROM roles WHERE userid = @userid AND guildid = @guildid";
             string JsonString = "{}";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@userid", (long)UserID);
             Cmd.Parameters.AddWithValue("@guildid", (long)GuildID);
-            using (SqlDataReader reader = Cmd.ExecuteReader())
+            using (SqlDataReader reader = await Cmd.ExecuteReaderAsync())
             {
                 if (reader.HasRows)
                 {
+                    await reader.ReadAsync();
                     JsonString = reader.GetString(0);
                 }
             }

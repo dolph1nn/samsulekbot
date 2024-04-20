@@ -17,7 +17,7 @@ namespace SSB.Core
             float TrueRPM = await GunTrueRPM(WeaponBaseRPM, RPMStat);
             int RPMCap = 3960;
 
-            while (TrueRPM < RPMCap) // 991
+            while (TrueRPM < RPMCap)
             {
                 for (int i = 0; i < 24; i++) RPMCap = RPMCaps[i];
             }    
