@@ -80,7 +80,7 @@ namespace SSB.Discord
         /// <returns>task stuff idk</returns>
         private static async Task SendStartupMessage(string message, ulong channelid)
         {
-            var channel = await SocketClient.GetChannelAsync(channelid) as IMessageChannel;
+            IMessageChannel channel = await SocketClient.GetChannelAsync(channelid) as IMessageChannel;
             await channel.SendMessageAsync(message);
         }
 

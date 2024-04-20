@@ -44,6 +44,7 @@ namespace SSB.Discord
                 .WithName("evaluate")
                 .WithDescription("Evaluates C# code using the Roslyn engine.")
                 .AddOption("code", ApplicationCommandOptionType.String, "The code to evaluate", isRequired: true)
+                .AddOption("hide", ApplicationCommandOptionType.Boolean, "Hide this command/its result from others?", isRequired: true)
                 .WithDefaultMemberPermissions(GuildPermission.Administrator)
                 .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel & InteractionContextType.BotDm);
             SlashCommandBuilder ProvisionCommand = new SlashCommandBuilder()
@@ -64,7 +65,7 @@ namespace SSB.Discord
             Console.WriteLine("Before Create");
             try
             {
-                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(ProvisionCommand.Build());
+                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(EvalCommand.Build());
 
             }
             catch (HttpException exception)
@@ -232,23 +233,35 @@ namespace SSB.Discord
 
         /// <summary>
         /// THIS IS A VERY DANGEROUS COMMAND/METHOD!!!
-        /// This is the METHOD for the Evaulate command.
-        /// I don't think this will work the way I want it to.
-        /// But I'll keep playing with it.
-        /// In theory it lets me run any dynamic C# code using a command; but the rules here are different from JavaScript. It runs in an independent script that, as you can see below, doesn't have all the normal imports of the parent program.
-        /// UPDATE: This can be fixed with the 3rd parameter to the method - globals
+        /// This is the Method for the Evaulate command.
+        /// This creates a C# script using the Roslyn engine using the command's input and runs it, then replies to the user based on the script's output or a compilation error if there is one.
         /// </summary>
-        /// <param name="Code">The code to run.</param>
+        /// <param name="command">The commnand object.</param>
         /// <returns>task stuff idk</returns>
         private static async Task EvaluateCode(SocketSlashCommand command)
         {
-            await command.DeferAsync();
+            //Converts arguments into Dictionary so we can just args["argname"] to get an argument without having to know what order its in or anything like that. Maybe this is not necessary but it's nice.
+            Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
+            //Defers the response, if they want to make it ephemeral or only shown to them, they answer true to the hide arg
+            await command.DeferAsync((bool)args["hide"].Value);
+            //right now this checks for my userID, i need to make a database table or something for it
             if (command.User.Id == 170679185650614272)
             {
-                string[] Imports = new string[] { "System", "Discord", "Discord.Net", "Discord.Websocket"};
-                //await command.RespondAsync("Evaluating...");
-                string Code = command.Data.Options.First().Value.ToString();
-                string fin = await CSharpScript.EvaluateAsync<string>(Code, ScriptOptions.Default.WithImports(Imports), DiscordHandler.SocketClient);
+                //Edits original response
+                await command.ModifyOriginalResponseAsync(msg => msg.Content = "Evaluating...");
+                //Declares our string variable that will be either filled with the result of the script or CompilationErrorException
+                string fin;
+                //Surround this in a try/catch block in case there's a CompilationErrorException
+                try
+                {
+                    //evaluate code and store the result in a string object, we pass in the SocketClient object so the script can interact with the bot's API
+                    fin = await CSharpScript.EvaluateAsync<string>((string)args["code"].Value, ScriptOptions.Default.WithImports(new string[] { "System", "Discord", "Discord.Net", "Discord.Websocket" }), DiscordHandler.SocketClient);
+                }
+                catch (CompilationErrorException Ex)
+                {
+                    fin = Ex.Message;
+                }
+                //Edit original response with the evaluated code or CompilationErrorException
                 await command.ModifyOriginalResponseAsync(msg => msg.Content = fin);
             }
             else
