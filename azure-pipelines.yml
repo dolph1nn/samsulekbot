@@ -126,15 +126,10 @@ steps:
     publishLocation: 'FilePath'
     TargetPath: '$(FileSharePath)'
 
-- task: UniversalPackages@0
+- task: PublishBuildArtifacts@1
   inputs:
-    command: 'publish'
-    publishDirectory: '$(Build.ArtifactStagingDirectory)'
-    feedsToUsePublish: 'internal'
-    vstsFeedPublish: 'a80cad32-a122-4269-9bb4-3434bf916c6e/f75440e0-f54c-47bc-97f6-398d012be580'
-    vstsFeedPackagePublish: '$(Build.Repository.Name)'
-    versionOption: 'patch'
-    packagePublishDescription: '$(Build.SourceVersionMessage)'
+    pathToPublish: '$(ArtifactStagingDirectory)'
+    artifactName: $(Build.Repository.Name)
 
 # Cleanup Artifact Staging Directory
 - task: DeleteFiles@1
