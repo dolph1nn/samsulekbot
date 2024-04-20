@@ -19,6 +19,7 @@ steps:
     destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
 
 - task: MSBuild@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
     solution: '**/*.sln'
     msbuildArchitecture: 'x64'
