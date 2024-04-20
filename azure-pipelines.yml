@@ -17,14 +17,12 @@ steps:
     sourceVerifySSLCertificate: false
     destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
     destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
-- task: DotNetCoreCLI@2
-  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+
+- task: NuGetRestore@1
   inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
-    feedsToUse: 'select'
-    includeNuGetOrg: true
-    restoreDirectory: $(NuGetTemp)
+    solution: '**/*.sln'
+    selectOrConfig: 'select'
+    packagesDirectory: '$(NuGetTemp)'
 - task: DotNetCoreCLI@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
