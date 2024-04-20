@@ -18,6 +18,14 @@ steps:
     destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
     destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
 
+# Clear build folder
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/*'
+
+# Restore package dependencies
 - task: MSBuild@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
@@ -25,6 +33,7 @@ steps:
     msbuildArchitecture: 'x64'
     msbuildArguments: '-t:restore -p:RestorePackagesConfig=true'
 
+# Build projects
 - task: DotNetCoreCLI@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
@@ -32,11 +41,15 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory)'
 
+# Delete XML and PDB files
 - task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
     SourceFolder: '$(BinariesDirectory)'
     Contents: '**/*.{xml,pdb}'
-    
+ 
+# Create release_all.7z file
+# This includes all binaries and additional languages.
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
@@ -44,13 +57,78 @@ steps:
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
-    archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).7z'
+    archiveFile: '$(ArtifactStagingDirectory)/release_all.7z'
     replaceExistingArchive: true
 
+# Delete localization data
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/{cs,de,es,fr,it,ja,ko,pl,pt-BR,ru,tr,zh-Hans,zh-Hant}'
+
+# Create release_bin.7z file
+# This contains all base binaries but no localizations.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(ArtifactStagingDirectory)/release_bin.7z'
+    replaceExistingArchive: true
+
+# Delete Debug Console
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/SSB.DebugConsole.*'
+
+# Create release_svc.7z file
+# This contains base binaries for the Win32 service.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(ArtifactStagingDirectory)/release_svc.7z'
+    replaceExistingArchive: true
+
+# Delete Service
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/SSB.Service.*'
+
+# Create release_lib.7z file
+# This contains library binaries only.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(ArtifactStagingDirectory)/release_lib.7z'
+    replaceExistingArchive: true
+
+# Publish artifacts
 - task: PublishBuildArtifacts@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    PathtoPublish: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).7z'
+    PathtoPublish: '$(ArtifactStagingDirectory)'
     ArtifactName: '$(Build.SourceVersion)'
     publishLocation: 'FilePath'
     TargetPath: '$(FileSharePath)'
+
+# Cleanup Artifact Staging Directory
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(ArtifactStagingDirectory)'
+    Contents: '**/*'
