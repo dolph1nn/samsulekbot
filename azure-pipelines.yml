@@ -25,6 +25,11 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory)'
 
+- task: DeleteFiles@1
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/*.{xml,pdb}'
+    
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
