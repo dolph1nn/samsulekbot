@@ -46,3 +46,11 @@ steps:
     sevenZipCompression: 'maximum'
     archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).7z'
     replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    PathtoPublish: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).7z'
+    ArtifactName: '$(Build.SourceVersion)'
+    publishLocation: 'FilePath'
+    TargetPath: '$(FileSharePath)'
