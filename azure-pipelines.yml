@@ -18,17 +18,13 @@ steps:
     destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
     destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
 
-- task: NuGetRestore@1
-  inputs:
-    solution: '**/*.sln'
-    selectOrConfig: 'select'
-    packagesDirectory: '$(NuGetTemp)'
 - task: DotNetCoreCLI@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory) --source $(NuGetTemp)'
+
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
