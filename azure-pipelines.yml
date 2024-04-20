@@ -35,6 +35,7 @@ steps:
   inputs:
     rootFolderOrFile: '$(BinariesDirectory)'
     includeRootFolder: false
-    archiveType: 'tar'
-    archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).tar.gz'
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).7z'
     replaceExistingArchive: true
