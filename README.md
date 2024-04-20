@@ -10,6 +10,7 @@ a silly little bot i made with inspiration from pop culture icon Sam Sulek
 
 # Reporting Issues
 this repo is cloned into GitHub so i may not merge your PRs here but i will accept them and merge in the origin
+
 with that said PRs and issues are still welcome, submitting a patch file along with your PR will speed up acceptance
 
 # Copyright
