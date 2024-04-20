@@ -36,5 +36,5 @@ steps:
     rootFolderOrFile: '$(BinariesDirectory)'
     includeRootFolder: false
     archiveType: 'tar'
-    archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).tgz'
+    archiveFile: '$(ArtifactStagingDirectory)/$(Build.SourceVersion).tar.gz'
     replaceExistingArchive: true
