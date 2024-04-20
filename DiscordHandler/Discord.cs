@@ -144,7 +144,7 @@ namespace SSB.Discord
             }
             if (!BeforeRoles.Equals(AfterRoles))
             {
-                await DBHandler.UpdateUserRoles(UserAfter.Id, UserAfter.Guild.Id, AfterRoles);
+                await DBHandler.UpdateGuildUserRoles(UserAfter.Id, UserAfter.Guild.Id, AfterRoles);
             }
         }
 

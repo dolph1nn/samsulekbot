@@ -27,6 +27,11 @@ namespace SSB.Database
     {
         private static SqlConnection SqlConn { get; set; }
 
+        /// <summary>
+        /// This method opens the connection to the database.
+        /// </summary>
+        /// <param name="Config"></param>
+        /// <returns></returns>
         public static async Task OpenConnection(SSBConfig Config)
         {
             SqlConn = new SqlConnection("Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI" + ";Encrypt=" + Config.DBSSL.ToString().ToLower());
@@ -34,6 +39,14 @@ namespace SSB.Database
             return;
         }
 
+        /// <summary>
+        /// Inserts a new GuildUserRole object into the database.
+        /// This stores a JSON-Serialized string of their RoleIDs which gets converted back into a List<ulong> to do things with.
+        /// </summary>
+        /// <param name="UserID"></param>
+        /// <param name="GuildID"></param>
+        /// <param name="RoleIDs"></param>
+        /// <returns></returns>
         public static async Task InsertGuildUserRoles(ulong UserID, ulong GuildID, List<ulong> RoleIDs)
         {
             const string Query = "INSERT INTO roles (userid, guildid, roles) VALUES (@UserID, @GuildID, @UserRoles)";
@@ -44,6 +57,13 @@ namespace SSB.Database
             await Cmd.ExecuteNonQueryAsync();
             return;
         }
+
+        /// <summary>
+        /// This returns a List<ulong> from the JSON string of their roles. See the method above.
+        /// </summary>
+        /// <param name="UserID"></param>
+        /// <param name="GuildID"></param>
+        /// <returns></returns>
         public static async Task<List<ulong>> FetchGuildUserRoles(ulong UserID, ulong GuildID)
         {
             const string Query = "SELECT userroles FROM roles WHERE userid = @userid AND guildid = @guildid";
@@ -62,7 +82,14 @@ namespace SSB.Database
             return JsonConvert.DeserializeObject<List<ulong>>(JsonString);
         }
 
-        public static async Task UpdateUserRoles(ulong UserID, ulong GuildID, List<ulong> RoleIDs)
+        /// <summary>
+        /// Updates a GuildUserRoles entry. See two above methods.
+        /// </summary>
+        /// <param name="UserID"></param>
+        /// <param name="GuildID"></param>
+        /// <param name="RoleIDs"></param>
+        /// <returns></returns>
+        public static async Task UpdateGuildUserRoles(ulong UserID, ulong GuildID, List<ulong> RoleIDs)
         {
             const string Query = "UPDATE roles SET userroles = @userroles WHERE userid = @userid AND guildid = @guildid)";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);

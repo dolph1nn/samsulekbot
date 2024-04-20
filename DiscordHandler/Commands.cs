@@ -218,7 +218,7 @@ namespace SSB.Discord
 
 
         /// <summary>
-        /// 
+        /// This method creates an emote from a URL.
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
@@ -231,8 +231,8 @@ namespace SSB.Discord
         }
 
         /// <summary>
-        /// THIS IS A VERY DANGEROUS COMMAND/FUNCTION!!!
-        /// This is the function for the Evaulate command.
+        /// THIS IS A VERY DANGEROUS COMMAND/METHOD!!!
+        /// This is the METHOD for the Evaulate command.
         /// I don't think this will work the way I want it to.
         /// But I'll keep playing with it.
         /// In theory it lets me run any dynamic C# code using a command; but the rules here are different from JavaScript. It runs in an independent script that, as you can see below, doesn't have all the normal imports of the parent program.

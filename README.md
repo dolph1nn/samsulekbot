@@ -1,5 +1,9 @@
 # Introduction 
-a silly little bot i made with inspiration from pop culture icon Sam Sulek
+A silly little bot I made with inspiration from pop culture icon Sam Sulek
+
+This bot nor its creator do not have any affiliation to, or endorsement from, Sam Sulek
+
+This is purely a fan project and if Sam Sulek requests this to be taken down and reuploaded with a different name I will do so
 
 # Getting Started
 1.	clone repo
