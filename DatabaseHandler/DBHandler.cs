@@ -1,4 +1,20 @@
-﻿using System;
+﻿/* This file is part of SamSulekBot.
+ *
+ * SamSulekBot is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * SamSulekBot is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with SamSulekBot. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -13,8 +29,7 @@ namespace SSB.Database
 
         public static async Task OpenConnection(SSBConfig Config)
         {
-            string ConnStr = "Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI"+ ";Encrypt=" + Config.DBSSL.ToString().ToLower();
-            SqlConn = new SqlConnection(ConnStr);
+            SqlConn = new SqlConnection("Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI" + ";Encrypt=" + Config.DBSSL.ToString().ToLower());
             await SqlConn.OpenAsync();
             return;
         }
