@@ -13,6 +13,6 @@ this repo is cloned into GitHub so i may not merge your PRs here but i will acce
 with that said PRs and issues are still welcome, submitting a patch file along with your PR will speed up acceptance
 
 # Copyright
-License: GPL 2.0
+License: GPL 3.0
 
 Read file [COPYING](COPYING).
