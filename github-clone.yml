@@ -1,0 +1,19 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  name: LocalAgent
+
+steps:
+- task: mirror-git-repository-vsts-task@1
+  inputs:
+    sourceGitRepositoryUri: 'https://devops.lunarcolony.dev/Projects/SamSulekBot/_git/SamSulekBot'
+    sourceGitRepositoryPersonalAccessToken: '$(SrcPat)'
+    sourceVerifySSLCertificate: false
+    destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
+    destinationGitRepositoryPersonalAccessToken: '$(DestPat)'

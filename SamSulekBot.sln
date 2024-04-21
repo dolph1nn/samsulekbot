@@ -12,10 +12,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06A15840-8980-4A78-B984-A12B7DBBEFBD}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		azure-pipelines.yml = azure-pipelines.yml
+		build-pipeline.yml = build-pipeline.yml
 		cfg.template.json = cfg.template.json
 		COPYING = COPYING
 		README.md = README.md
+		github-clone.yml = github-clone.yml
 	EndProjectSection
 EndProject
 Global

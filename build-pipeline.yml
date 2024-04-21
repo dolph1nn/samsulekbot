@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
@@ -10,13 +5,6 @@ pool:
   name: LocalAgent
 
 steps:
-- task: mirror-git-repository-vsts-task@1
-  inputs:
-    sourceGitRepositoryUri: 'https://devops.lunarcolony.dev/Projects/SamSulekBot/_git/SamSulekBot'
-    sourceGitRepositoryPersonalAccessToken: '$(SrcPat)'
-    sourceVerifySSLCertificate: false
-    destinationGitRepositoryUri: 'https://github.com/dolph1nn/samsulekbot'
-    destinationGitRepositoryPersonalAccessToken: '$(DestPat)'
 
 # Clear build folder
 - task: DeleteFiles@1
@@ -50,6 +38,7 @@ steps:
 
 # Copy cfg template
 - task: CopyFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
     SourceFolder: '$(Build.Repository.LocalPath)'
     Contents: '**/cfg.template.json'
@@ -64,7 +53,7 @@ steps:
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
-    archiveFile: '$(ArtifactStagingDirectory)/release_all.7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_all.7z'
     replaceExistingArchive: true
 
 # Delete localization data
@@ -83,7 +72,7 @@ steps:
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
-    archiveFile: '$(ArtifactStagingDirectory)/release_bin.7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_bin.7z'
     replaceExistingArchive: true
 
 # Delete Debug Console
@@ -102,7 +91,7 @@ steps:
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
-    archiveFile: '$(ArtifactStagingDirectory)/release_svc.7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_svc.7z'
     replaceExistingArchive: true
 
 # Delete Service and cfg template
@@ -121,26 +110,26 @@ steps:
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
-    archiveFile: '$(ArtifactStagingDirectory)/release_lib.7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_lib.7z'
     replaceExistingArchive: true
 
 # Publish artifacts
 - task: PublishBuildArtifacts@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    PathtoPublish: '$(ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: '$(Build.SourceVersion)'
     publishLocation: 'FilePath'
     TargetPath: '$(FileSharePath)'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: '$(ArtifactStagingDirectory)'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: $(Build.Repository.Name)
 
 # Cleanup Artifact Staging Directory
 - task: DeleteFiles@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    SourceFolder: '$(ArtifactStagingDirectory)'
+    SourceFolder: '$(Build.ArtifactStagingDirectory)'
     Contents: '**/*'
