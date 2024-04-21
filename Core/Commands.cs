@@ -169,48 +169,48 @@ namespace SSB.Discord
         /// </summary>
         /// <param name="pct">the string of the progress bar</param>
         /// <returns>a string </returns>
-        private static string UpdateProgressBar(float pct)
+        public static string UpdateProgressBar(float pct)
         {
             if (pct > 1) { pct /= 100; }
 
             string prog1 = "=", prog2 = "=", prog3 = "=", prog4 = "=", prog5 = "=", prog6 = "=", prog7 = "=",prog8 = "=", prog9 = "=", prog10 = "=";
-            if (pct < .1)
+            if (pct < .1f)
             {
                 prog1 = " "; prog2 = " "; prog3 = " "; prog4 = " "; prog5 = " "; prog6 = " "; prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .1 && pct < .2)
+            else if (pct >= .1f && pct < .2f)
             {
                 prog2 = " "; prog3 = " "; prog4 = " "; prog5 = " "; prog6 = " "; prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .2 && pct < .3)
+            else if (pct >= .2f && pct < .3f)
             {
                 prog3 = " "; prog4 = " "; prog5 = " "; prog6 = " "; prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .3 && pct < .4)
+            else if (pct >= .3f && pct < .4f)
             {
                 prog4 = " "; prog5 = " "; prog6 = " "; prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .4 && pct < .5)
+            else if (pct >= .4f && pct < .5f)
             {
                 prog5 = " "; prog6 = " "; prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .5 && pct < .6)
+            else if (pct >= .5f && pct < .6f)
             {
                 prog6 = " "; prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .6 && pct < .7)
+            else if (pct >= .6f && pct < .7f)
             {
                 prog7 = " "; prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .7 && pct < .8)
+            else if (pct >= .7f && pct < .8f)
             {
                 prog8 = " "; prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .8 && pct < .9)
+            else if (pct >= .8f && pct < .9f)
             {
                 prog9 = " "; prog10 = " ";
             }
-            else if (pct >= .9 && pct < 1)
+            else if (pct >= .9f && pct < 1f)
             {
                 prog10 = " ";
             }
