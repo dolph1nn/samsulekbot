@@ -147,7 +147,7 @@ namespace SSB.Core.Database
                 {
                     while (await reader.ReadAsync())
                     {
-                        messages.Add(new GlobalChatMessage(reader.GetInt32(0), reader.GetDateTime(1), (GlobalChatSource)reader.GetInt32(2), reader.GetString(3), reader.GetString(4)));
+                        messages.Add(new GlobalChatMessage(reader.GetInt32(0), reader.GetDateTime(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)));
                     }
 
                     foreach (GlobalChatMessage message in messages)

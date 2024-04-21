@@ -23,11 +23,11 @@ namespace SSB.Core
     {
         public int ID { get; }
         public DateTime Timestamp { get; }
-        public GlobalChatSource Source { get; }
+        public string Source { get; }
         public string Author { get; }
         public string Message { get; }
 
-        public GlobalChatMessage(int _ID, DateTime _Timestamp, GlobalChatSource _Source, string _Author, string _Message)
+        public GlobalChatMessage(int _ID, DateTime _Timestamp, string _Source, string _Author, string _Message)
         {
             ID = _ID;
             Timestamp = _Timestamp;
@@ -35,10 +35,5 @@ namespace SSB.Core
             Author = _Author;
             Message = _Message;
         }
-    }
-
-    public enum GlobalChatSource
-    {
-        Discord = 0
     }
 }
