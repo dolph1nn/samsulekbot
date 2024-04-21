@@ -26,47 +26,47 @@ namespace Tests
         [TestMethod]
         public async Task TestTrueRPM()
         {
-            float Expected = (float)Math.Round(820.7792207792207f, 3);
-            float Actual = await SSB.Core.VelkTTT.GunTrueRPM(632, .23f);
+            double Expected = (double)Math.Round(820.7792207792207, 3);
+            double Actual = await SSB.Core.VelkTTT.GunTrueRPM(632, .23);
             Assert.AreEqual(Expected, Actual, 0.001f);
         }
 
         [TestMethod]
         public async Task TestEffectiveRPM()
         {
-            Assert.AreEqual((float)792, await SSB.Core.VelkTTT.GunEffectiveRPM(632, .23F));
+            Assert.AreEqual(792, await SSB.Core.VelkTTT.GunEffectiveRPM(632, .23));
         }
 
         [TestMethod]
         public async Task TestReverseRPM()
         {
-            float Expected = 0.3622603430877901f;
-            float Actual = await SSB.Core.VelkTTT.ReverseRPM(632, 991);
+            double Expected = 0.3622603430877901;
+            double Actual = await SSB.Core.VelkTTT.ReverseRPM(632, 991);
             Assert.AreEqual(Expected, Actual);
         }
 
         [TestMethod]
         public async Task TestReverseRPMTrig()
         {
-            float Expected = 0.2625582135612744f;
-            float Actual = await SSB.Core.VelkTTT.ReverseRPM(632, 991, 13.52f);
+            double Expected = 0.2625582135612744;
+            double Actual = await SSB.Core.VelkTTT.ReverseRPM(632, 991, 13.52);
             Assert.AreEqual(Expected, Actual);
         }
 
         [TestMethod]
-        public async Task TestFloatToPct()
+        public async Task TestdoubleToPct()
         {
-            float Expected = 24.37f;
-            float Actual = await SSB.Core.VelkTTT.FloatToPct(0.67f, new SSB.Core.VelkTTT.StatRange() { Min = 17, Max = 28 });
+            double Expected = 24.37;
+            double Actual = await SSB.Core.VelkTTT.doubleToPct(0.67, new SSB.Core.VelkTTT.StatRange() { Min = 17, Max = 28 });
             Assert.AreEqual(Expected, Actual);
         }
 
         [TestMethod]
-        public async Task TestPctToFloat()
+        public async Task TestPctTodouble()
         {
-            float Expected = 0.67f;
-            float Actual = await SSB.Core.VelkTTT.PctToFloat(24.37f, new SSB.Core.VelkTTT.StatRange() { Min = 17, Max = 28 });
-            Assert.AreEqual(Expected, Actual, 0.001f);
+            double Expected = 0.67;
+            double Actual = await SSB.Core.VelkTTT.PctTodouble(24.37, new SSB.Core.VelkTTT.StatRange() { Min = 17, Max = 28 });
+            Assert.AreEqual(Expected, Actual);
         }
     }
 }

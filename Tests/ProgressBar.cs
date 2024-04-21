@@ -33,7 +33,7 @@ namespace Tests
         public void ProgressBarTest10Pct()
         {
             string Expected = "[=         ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.1f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.1);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -41,7 +41,7 @@ namespace Tests
         public void ProgressBarTest20Pct()
         {
             string Expected = "[==        ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.2f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.2);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -49,7 +49,7 @@ namespace Tests
         public void ProgressBarTest30Pct()
         {
             string Expected = "[===       ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.3f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.3);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -57,7 +57,7 @@ namespace Tests
         public void ProgressBarTest40Pct()
         {
             string Expected = "[====      ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.4f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.4);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -65,7 +65,7 @@ namespace Tests
         public void ProgressBarTest50Pct()
         {
             string Expected = "[=====     ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.5f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.5);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -73,7 +73,7 @@ namespace Tests
         public void ProgressBarTest60Pct()
         {
             string Expected = "[======    ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.6f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.6);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -81,7 +81,7 @@ namespace Tests
         public void ProgressBarTest70Pct()
         {
             string Expected = "[=======   ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.7f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.7);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -89,7 +89,7 @@ namespace Tests
         public void ProgressBarTest80Pct()
         {
             string Expected = "[========  ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.8f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.8);
             Assert.AreEqual(Expected, Actual);
         }
 
@@ -97,7 +97,7 @@ namespace Tests
         public void ProgressBarTest90Pct()
         {
             string Expected = "[========= ]";
-            string Actual = SSB.Discord.Commands.UpdateProgressBar(.9f);
+            string Actual = SSB.Discord.Commands.UpdateProgressBar(.9);
             Assert.AreEqual(Expected, Actual);
         }
 

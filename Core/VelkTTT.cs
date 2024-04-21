@@ -22,15 +22,15 @@ namespace SSB.Core
     public static class VelkTTT
     {
 
-        public static async Task<float> GunTrueRPM(float WeaponBaseRPM, float RPMStat)
+        public static async Task<double> GunTrueRPM(double WeaponBaseRPM, double RPMStat)
         {
             if (RPMStat > 1) { RPMStat /= 100; }
             return WeaponBaseRPM / (1 - RPMStat);
         }
 
-        public static async Task<float> GunEffectiveRPM(float WeaponBaseRPM, float RPMStat)
+        public static async Task<double> GunEffectiveRPM(double WeaponBaseRPM, double RPMStat)
         {
-            float TrueRPM = await GunTrueRPM(WeaponBaseRPM, RPMStat);
+            double TrueRPM = await GunTrueRPM(WeaponBaseRPM, RPMStat);
             int RPMCap = 3960;
 
             while (TrueRPM < RPMCap)
@@ -40,23 +40,23 @@ namespace SSB.Core
             return RPMCap;
         }
 
-        public static async Task<float> ReverseRPM(float WeaponRPM, float DesiredRPM)
+        public static async Task<double> ReverseRPM(double WeaponRPM, double DesiredRPM)
         {
             return ((WeaponRPM / DesiredRPM) - 1) * -1;
         }
 
-        public static async Task<float> ReverseRPM(float WeaponRPM, float DesiredRPM, float Trig)
+        public static async Task<double> ReverseRPM(double WeaponRPM, double DesiredRPM, double Trig)
         {
             if (Trig > 1) { Trig /= 100; }
             return ((WeaponRPM / (1 - Trig) / DesiredRPM) - 1) * -1;
         }
 
-        public static async Task<float> FloatToPct(float Value, StatRange Range)
+        public static async Task<double> doubleToPct(double Value, StatRange Range)
         {
             return ((Range.Max - Range.Min) * Value) + Range.Min;
         }
 
-        public static async Task<float> PctToFloat(float Value, StatRange Range)
+        public static async Task<double> PctTodouble(double Value, StatRange Range)
         {
             if (Value <= 1) { Value *= 100; }
             return ((Value - Range.Min) / (Range.Max - Range.Min));
