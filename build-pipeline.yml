@@ -10,7 +10,7 @@ steps:
 - task: DeleteFiles@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    SourceFolder: '$(BinariesDirectory)'
+    SourceFolder: '$(Build.BinariesDirectory)'
     Contents: '**/*'
 
 # Restore package dependencies
@@ -27,13 +27,13 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.BinariesDirectory)'
 
 # Delete XML and PDB files
 - task: DeleteFiles@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    SourceFolder: '$(BinariesDirectory)'
+    SourceFolder: '$(Build.BinariesDirectory)'
     Contents: '**/*.{xml,pdb}'
 
 # Copy cfg template
@@ -42,14 +42,14 @@ steps:
   inputs:
     SourceFolder: '$(Build.Repository.LocalPath)'
     Contents: '**/cfg.template.json'
-    TargetFolder: '$(BinariesDirectory)'
+    TargetFolder: '$(Build.BinariesDirectory)'
 
 # Create release_all.7z file
 # This includes all binaries and additional languages.
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    rootFolderOrFile: '$(BinariesDirectory)'
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
@@ -60,7 +60,7 @@ steps:
 - task: DeleteFiles@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    SourceFolder: '$(BinariesDirectory)'
+    SourceFolder: '$(Build.BinariesDirectory)'
     Contents: '**/{cs,de,es,fr,it,ja,ko,pl,pt-BR,ru,tr,zh-Hans,zh-Hant}'
 
 # Create release_bin.7z file
@@ -68,7 +68,7 @@ steps:
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    rootFolderOrFile: '$(BinariesDirectory)'
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
@@ -79,7 +79,7 @@ steps:
 - task: DeleteFiles@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    SourceFolder: '$(BinariesDirectory)'
+    SourceFolder: '$(Build.BinariesDirectory)'
     Contents: '**/SSB.DebugConsole.*'
 
 # Create release_svc.7z file
@@ -87,7 +87,7 @@ steps:
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    rootFolderOrFile: '$(BinariesDirectory)'
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
@@ -98,7 +98,7 @@ steps:
 - task: DeleteFiles@1
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    SourceFolder: '$(BinariesDirectory)'
+    SourceFolder: '$(Build.BinariesDirectory)'
     Contents: '**/{SSB.Service,cfg.template}.*'
 
 # Create release_lib.7z file
@@ -106,7 +106,7 @@ steps:
 - task: ArchiveFiles@2
   condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
   inputs:
-    rootFolderOrFile: '$(BinariesDirectory)'
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
     includeRootFolder: false
     archiveType: '7z'
     sevenZipCompression: 'maximum'
