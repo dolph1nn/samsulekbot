@@ -24,6 +24,7 @@ namespace SSB.Core
     public class SSBConfig
     {
         public string Token { get; set; } = String.Empty;
+        public int GlobalChatChannel { get; set; } = 0;
         public string DBDriver { get; set; } = String.Empty;
         public string DBHostname { get; set; } = String.Empty;
         public string DBDatabase { get; set; } = String.Empty;

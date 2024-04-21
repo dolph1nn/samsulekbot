@@ -135,10 +135,10 @@ namespace SSB.Core.Database
             return exists;
         }
 
-        public static async Task<List<GlobalChatMessage>> CheckNewGlobalChatMessages(DateTime LastChecked)
+        public static async Task CheckNewGlobalChatMessages(DateTime LastChecked)
         {
             List<GlobalChatMessage> messages = new List<GlobalChatMessage>();
-            string Query = "SELECT * FROM globalchat WHERE timestamp > @lastchecked";
+            string Query = "SELECT * FROM globalchat WHERE timestamp > @lastchecked AND source != 0";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@lastchecked", LastChecked);
             using (SqlDataReader reader = await Cmd.ExecuteReaderAsync())
@@ -149,9 +149,14 @@ namespace SSB.Core.Database
                     {
                         messages.Add(new GlobalChatMessage(reader.GetInt32(0), reader.GetDateTime(1), (GlobalChatSource)reader.GetInt32(2), reader.GetString(3), reader.GetString(4)));
                     }
+
+                    foreach (GlobalChatMessage message in messages)
+                    {
+                        await Discord.DiscordHandler.ProcessGlobalChatMessage_in(message);
+                    }
                 }
             }
-            return messages;
+            return;
         }
     }
 }

@@ -84,9 +84,22 @@ namespace SSB.Discord
             await channel.SendMessageAsync(message);
         }
 
+        /// <summary>
+        /// a little function i wrote to make sending messages to a specific channel easier
+        /// </summary>
+        /// <param name="message">a string containing the message you want to send</param>
+        /// <param name="channelid">a ulong of the channel ID you want to send the message to</param>
+        /// <returns>task stuff idk</returns>
+        private static async Task SendStartupMessage(EmbedBuilder Embed, ulong channelid)
+        {
+            IMessageChannel channel = await SocketClient.GetChannelAsync(channelid) as IMessageChannel;
+            await channel.SendMessageAsync(embed: Embed.Build());
+        }
+
         private static async Task ReadyEvent()
         {
             Console.WriteLine("Bot is connected!");
+            GlobalChat.GlobalChatChannel = Config.GlobalChatChannel;
             #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             GlobalChat.StartNewMessageCheck();
             #pragma warning restore CS4014
@@ -175,12 +188,22 @@ namespace SSB.Discord
             }
         }
 
-        public static async Task ProcessGlobalChatMessage_in()
+        public static async Task ProcessGlobalChatMessage_in(GlobalChatMessage message)
         {
-
+            string MsgSrc = "Unknown";
+            switch (message.Source)
+            {
+                case GlobalChatSource.Discord:
+                    MsgSrc = "Discord";
+                    break;
+                default:
+                    break;
+            }
+            EmbedBuilder Build = new EmbedBuilder { Title = MsgSrc, Description = message.Message }.WithAuthor(message.Author);
+            await SendStartupMessage(Build, (ulong)GlobalChat.GlobalChatChannel);
         }
 
-        public static async Task ProcessGlobalChatMessage_out(SocketMessage Message)
+        private static async Task ProcessGlobalChatMessage_out(SocketMessage Message)
         {
 
         }

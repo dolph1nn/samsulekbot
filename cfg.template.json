@@ -1,5 +1,6 @@
 {
 	"Token": "ChangeMe",
+	"GlobalChatChannel": 0,
 	"DBDriver": "MSSQL",
 	"DBHostname": "asdf",
 	"DBDatabase": "asdf",

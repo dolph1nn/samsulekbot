@@ -57,9 +57,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscordHandler\Discord.csproj">
-      <Project>{158893c3-d10c-4c10-88cb-3e28110cc808}</Project>
-      <Name>Discord</Name>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{c8461cef-c28b-4887-93ee-3fd050ee8842}</Project>
+      <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
