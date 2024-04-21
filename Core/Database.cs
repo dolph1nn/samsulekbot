@@ -152,7 +152,7 @@ namespace SSB.Core.Database
 
                     foreach (GlobalChatMessage message in messages)
                     {
-                        await Discord.DiscordHandler.ProcessGlobalChatMessage_in(message);
+                        await DiscordBot.DiscordHandler.ProcessGlobalChatMessage_in(message);
                     }
                 }
             }

@@ -5,7 +5,7 @@ namespace SSB.Core
 {
     public static class GlobalChat
     {
-        public static int GlobalChatChannel = 0;
+        public static ulong GlobalChatChannel = 0;
         private static DateTime LastChecked = DateTime.MinValue;
         private static bool Jank = true;
         public static async Task StartNewMessageCheck()

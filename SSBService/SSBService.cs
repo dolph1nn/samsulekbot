@@ -28,12 +28,12 @@ namespace SSB.Service
 
         protected override void OnStart(string[] args)
         {
-            Discord.DiscordHandler.Init();
+            DiscordBot.DiscordHandler.Init();
         }
 
         protected override void OnStop()
         {
-            Discord.DiscordHandler.Stop();
+            DiscordBot.DiscordHandler.Stop();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace SSB
     {
         static async Task Main(/*string[] args*/)
         {
-            await Discord.DiscordHandler.Init();
+            await DiscordBot.DiscordHandler.Init();
         }
     }
 }

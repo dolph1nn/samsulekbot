@@ -26,7 +26,7 @@ using Newtonsoft.Json;
 using SSB.Core.Database;
 using SSB.Core;
 
-namespace SSB.Discord
+namespace SSB.DiscordBot
 {
     public static class DiscordHandler
     {

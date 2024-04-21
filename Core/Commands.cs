@@ -27,8 +27,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using SSB.Core.Database;
+using Microsoft.CodeAnalysis;
+using System.Reflection;
 
-namespace SSB.Discord
+namespace SSB.DiscordBot
 {
     public static class Commands
     {
@@ -250,13 +252,19 @@ namespace SSB.Discord
             {
                 //Edits original response
                 await command.ModifyOriginalResponseAsync(msg => msg.Content = "Evaluating...");
+
+                ScriptOptions options = ScriptOptions.Default.WithImports(new string[] { "System", "Discord", "Discord.Net", "Discord.WebSocket" });
+
+                options = options.AddReferences(typeof(IMessageChannel).Assembly);
+                options = options.AddReferences(typeof(DiscordSocketClient).Assembly);
+
                 //Declares our string variable that will be either filled with the result of the script or CompilationErrorException
                 string fin;
                 //Surround this in a try/catch block in case there's a CompilationErrorException
                 try
                 {
                     //evaluate code and store the result in a string object, we pass in the SocketClient object so the script can interact with the bot's API
-                    fin = await CSharpScript.EvaluateAsync<string>((string)args["code"].Value, ScriptOptions.Default.WithImports(new string[] { "System", "Discord", "Discord.Net", "Discord.Websocket" }), DiscordHandler.SocketClient);
+                    fin = await CSharpScript.EvaluateAsync<string>((string)args["code"].Value, options, globals: new Globals { _SocketClient = DiscordHandler.SocketClient});
                 }
                 catch (CompilationErrorException Ex)
                 {
@@ -272,5 +280,10 @@ namespace SSB.Discord
             }
 
         }
+    }
+
+    public class Globals
+    {
+        public DiscordSocketClient _SocketClient { get; set; }
     }
 }
