@@ -51,7 +51,7 @@ namespace SSB.Core.Database
         /// <returns></returns>
         public static async Task<List<ulong>> FetchGuildUserRoles(ulong UserID, ulong GuildID)
         {
-            const string Query = "SELECT userroles FROM roles WHERE userid = @userid AND guildid = @guildid";
+            const string Query = "SELECT roles FROM roles WHERE userid = @userid AND guildid = @guildid";
             string JsonString = "{}";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@userid", (long)UserID);
@@ -88,7 +88,7 @@ namespace SSB.Core.Database
         public static async Task<bool> CheckUserRolesExists(ulong UserID, ulong GuildID)
         {
             bool exists = false;
-            const string Query = "SELECT COUNT(*) FROM roles WHERE userid = @userid AND guildid = @guildid";
+            const string Query = "SELECT * FROM roles WHERE userid = @userid AND guildid = @guildid";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@userid", (long)UserID);
             Cmd.Parameters.AddWithValue("@guildid", (long)GuildID);

@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProgressBar.cs" />
+    <Compile Include="DatabaseTests.cs" />
     <Compile Include="VelkTTT_Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
