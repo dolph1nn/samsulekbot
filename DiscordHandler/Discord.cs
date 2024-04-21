@@ -23,7 +23,7 @@ using Discord;
 using AngouriMath;
 using Discord.WebSocket;
 using Newtonsoft.Json;
-using SSB.Database;
+using SSB.Core.Database;
 using SSB.Core;
 
 namespace SSB.Discord
@@ -40,7 +40,7 @@ namespace SSB.Discord
         public static async Task Init()
         {
             SocketClient = new DiscordSocketClient(new DiscordSocketConfig { /*MessageCacheSize = 100, */GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.Guilds });
-            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\cfg.json")); //File.ReadAllText(@"c:\ssb\cfg.json")
+            Config = JsonConvert.DeserializeObject<SSBConfig>(File.ReadAllText(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\cfg.json"));
             await SocketClient.LoginAsync(TokenType.Bot, Config.Token);
             await SocketClient.StartAsync();
             SocketClient.UserJoined += UserJoinGuildEvent;
@@ -87,9 +87,12 @@ namespace SSB.Discord
         private static async Task ReadyEvent()
         {
             Console.WriteLine("Bot is connected!");
+            #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            GlobalChat.StartNewMessageCheck();
+            #pragma warning restore CS4014
             await DBHandler.OpenConnection(Config);
             await SendStartupMessage("Connected to Database!", 430528035247095818);
-            await SocketClient.GetGuild(170683612092432387).DownloadUsersAsync();
+            await SocketClient.SetCustomStatusAsync("Working out");
             // Uncomment this line to provision any commands you need/want to.
             //await Commands.BuildCommands();
             return;
@@ -166,6 +169,20 @@ namespace SSB.Discord
                     await Message.Channel.SendMessageAsync(Result.ToString());
                 }
             }
+            else if (Message.Channel.Id.Equals(0))
+            {
+                await ProcessGlobalChatMessage_out(Message);
+            }
+        }
+
+        public static async Task ProcessGlobalChatMessage_in()
+        {
+
+        }
+
+        public static async Task ProcessGlobalChatMessage_out(SocketMessage Message)
+        {
+
         }
     }
 }

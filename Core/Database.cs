@@ -1,27 +1,12 @@
-﻿/* This file is part of SamSulekBot.
- *
- * SamSulekBot is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * SamSulekBot is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with SamSulekBot. If not, see <https://www.gnu.org/licenses/>.
- */
-
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SSB.Core;
 
-namespace SSB.Database
+namespace SSB.Core.Database
 {
     public static class DBHandler
     {
@@ -148,6 +133,25 @@ namespace SSB.Database
                 Console.WriteLine(ex.Message);
             }
             return exists;
+        }
+
+        public static async Task<List<GlobalChatMessage>> CheckNewGlobalChatMessages(DateTime LastChecked)
+        {
+            List<GlobalChatMessage> messages = new List<GlobalChatMessage>();
+            string Query = "SELECT * FROM globalchat WHERE timestamp > @lastchecked";
+            SqlCommand Cmd = new SqlCommand(Query, SqlConn);
+            Cmd.Parameters.AddWithValue("@lastchecked", LastChecked);
+            using (SqlDataReader reader = await Cmd.ExecuteReaderAsync())
+            {
+                if (reader.HasRows)
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        messages.Add(new GlobalChatMessage(reader.GetInt32(0), reader.GetDateTime(1), (GlobalChatSource)reader.GetInt32(2), reader.GetString(3), reader.GetString(4)));
+                    }
+                }
+            }
+            return messages;
         }
     }
 }

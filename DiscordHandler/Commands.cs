@@ -26,6 +26,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using SSB.Core.Database;
 
 namespace SSB.Discord
 {
@@ -124,10 +125,10 @@ namespace SSB.Discord
             }
             else
             {
-                Task<bool> tasdasd = Database.DBHandler.CheckGuildExists(GuildID);
+                Task<bool> tasdasd = DBHandler.CheckGuildExists(GuildID);
                 if (!tasdasd.Result)
                 {
-                    await Database.DBHandler.InsertNewGuild(GuildID);
+                    await DBHandler.InsertNewGuild(GuildID);
                     const string ProvMsg = "Guild provisioned, now provisioning users...";
                     string ProvMsg2 = ProvMsg;
                     await command.ModifyOriginalResponseAsync(msg => msg.Content = ProvMsg2);
@@ -145,7 +146,7 @@ namespace SSB.Discord
                                     Roles.Add(UserRole.Id);
                                 }
                             } 
-                            await Database.DBHandler.InsertGuildUserRoles(User.Id, User.Guild.Id, Roles);
+                            await DBHandler.InsertGuildUserRoles(User.Id, User.Guild.Id, Roles);
                         }
                         if (++Progress > UserCount) { Progress = UserCount; } ProgressPct = Progress/UserCount;
                         ProvMsg2 = ProvMsg + " " + UpdateProgressBar(ProgressPct) + "("+Progress+" out of " + UserCount + ")";
