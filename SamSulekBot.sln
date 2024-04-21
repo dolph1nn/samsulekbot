@@ -22,6 +22,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{13D8227C-FC5A-44DA-9C55-D2BA9E2E8AAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalChatTester", "GlobalChatTester\GlobalChatTester.csproj", "{2F4D4844-96D8-45E9-A1B2-E4FB2E526FC4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CD19EB35-4385-419A-92CC-6F7ED3CF8E76} = {CD19EB35-4385-419A-92CC-6F7ED3CF8E76}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

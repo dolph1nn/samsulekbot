@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SSB.Core.Database
 {
@@ -19,7 +20,7 @@ namespace SSB.Core.Database
         /// <returns></returns>
         public static async Task OpenConnection(SSBConfig Config)
         {
-            SqlConn = new SqlConnection("Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI" + ";Encrypt=" + Config.DBSSL.ToString().ToLower());
+            SqlConn = new SqlConnection("Data Source=" + Config.DBHostname + ";Initial Catalog=" + Config.DBDatabase + ";Integrated Security=SSPI" + ";Encrypt=" + Config.DBSSL.ToString().ToLower() + ";MultipleActiveResultSets=true");
             await SqlConn.OpenAsync();
             return;
         }
@@ -138,7 +139,7 @@ namespace SSB.Core.Database
         public static async Task CheckNewGlobalChatMessages(DateTime LastChecked)
         {
             List<GlobalChatMessage> messages = new List<GlobalChatMessage>();
-            string Query = "SELECT * FROM globalchat WHERE timestamp > @lastchecked AND source != 0";
+            string Query = "SELECT id, timestamp, source, author, message FROM globalchat WHERE timestamp >= @lastchecked AND source != 0 AND history = 0";
             SqlCommand Cmd = new SqlCommand(Query, SqlConn);
             Cmd.Parameters.AddWithValue("@lastchecked", LastChecked);
             using (SqlDataReader reader = await Cmd.ExecuteReaderAsync())
@@ -147,16 +148,36 @@ namespace SSB.Core.Database
                 {
                     while (await reader.ReadAsync())
                     {
-                        messages.Add(new GlobalChatMessage(reader.GetInt32(0), reader.GetDateTime(1), (GlobalChatSource)reader.GetInt32(2), reader.GetString(3), reader.GetString(4)));
+                        messages.Add(new GlobalChatMessage { ID = reader.GetInt32(0), Timestamp = reader.GetDateTime(1), Source = reader.GetString(2), Author = reader.GetString(3), Message = reader.GetString(4) });
                     }
 
                     foreach (GlobalChatMessage message in messages)
                     {
                         await Discord.DiscordHandler.ProcessGlobalChatMessage_in(message);
+                        await ArchiveGlobalChatMessage(message);
                     }
                 }
             }
             return;
+        }
+
+        private static async Task ArchiveGlobalChatMessage(GlobalChatMessage message)
+        {
+            string Query = "UPDATE globalchat SET history = 1 WHERE id = @uid";
+            SqlCommand Cmd = new SqlCommand(Query, SqlConn);
+            Cmd.Parameters.AddWithValue("@uid", message.ID);
+            await Cmd.ExecuteNonQueryAsync();
+        }
+
+        public static async Task InsertNewGlobalChatMessage(GlobalChatMessage message)
+        {
+            string Query = "INSERT INTO globalchat (timestamp, source, author, message) VALUES (@timestamp, @source, @author, @message)";
+            SqlCommand Cmd = new SqlCommand(Query, SqlConn);
+            Cmd.Parameters.AddWithValue("@timestamp", message.Timestamp);
+            Cmd.Parameters.AddWithValue("@source", message.Source);
+            Cmd.Parameters.AddWithValue("@author", message.Author);
+            Cmd.Parameters.AddWithValue("@message", message.Message);
+            await Cmd.ExecuteNonQueryAsync();
         }
     }
 }

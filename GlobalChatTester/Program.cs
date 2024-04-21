@@ -14,7 +14,10 @@
  * with SamSulekBot. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Threading.Tasks;
+using SSB.Core;
+using SSB.Core.Database;
 
 namespace GlobalChatTester
 {
@@ -22,6 +25,8 @@ namespace GlobalChatTester
     {
         static async Task Main(string[] args)
         {
+            await DBHandler.OpenConnection(new SSBConfig { DBHostname = "2019-SRV14.lunarcolony.local", DBDatabase = "ssbd" });
+            await DBHandler.InsertNewGlobalChatMessage(new GlobalChatMessage { Author = "dolphin", Message = "test", Source = "Test", Timestamp = DateTime.Now });
         }
     }
 }

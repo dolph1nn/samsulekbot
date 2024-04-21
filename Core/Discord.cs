@@ -190,16 +190,7 @@ namespace SSB.Discord
 
         public static async Task ProcessGlobalChatMessage_in(GlobalChatMessage message)
         {
-            string MsgSrc = "Unknown";
-            switch (message.Source)
-            {
-                case GlobalChatSource.Discord:
-                    MsgSrc = "Discord";
-                    break;
-                default:
-                    break;
-            }
-            EmbedBuilder Build = new EmbedBuilder { Title = MsgSrc, Description = message.Message }.WithAuthor(message.Author);
+            EmbedBuilder Build = new EmbedBuilder { Title = message.Source, Description = message.Message }.WithAuthor(message.Author);
             await SendStartupMessage(Build, (ulong)GlobalChat.GlobalChatChannel);
         }
 
