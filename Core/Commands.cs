@@ -268,8 +268,7 @@ namespace SSB.Discord
             else
             {
                 await command.ModifyOriginalResponseAsync(msg => msg.Content = "WARNING: You have attempted to use a dangerous command only intended for developers." +
-                    "I'll give you the benefit of the doubt that this was a genuine mistake. If you do this again, you will permanently lose access to ALL" +
-                    "of my commands.");
+                    "I'll give you the benefit of the doubt that this was a genuine mistake. If you do this again, you will permanently lose access to ALL of my commands.");
             }
 
         }
