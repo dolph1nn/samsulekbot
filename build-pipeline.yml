@@ -1,0 +1,135 @@
+trigger:
+- main
+
+pool:
+  name: LocalAgent
+
+steps:
+
+# Clear build folder
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/*'
+
+# Restore package dependencies
+- task: MSBuild@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    solution: '**/*.sln'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: '-t:restore -p:RestorePackagesConfig=true'
+
+# Build projects
+- task: DotNetCoreCLI@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(BinariesDirectory)'
+
+# Delete XML and PDB files
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/*.{xml,pdb}'
+
+# Copy cfg template
+- task: CopyFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(Build.Repository.LocalPath)'
+    Contents: '**/cfg.template.json'
+    TargetFolder: '$(BinariesDirectory)'
+
+# Create release_all.7z file
+# This includes all binaries and additional languages.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_all.7z'
+    replaceExistingArchive: true
+
+# Delete localization data
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/{cs,de,es,fr,it,ja,ko,pl,pt-BR,ru,tr,zh-Hans,zh-Hant}'
+
+# Create release_bin.7z file
+# This contains all base binaries but no localizations.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_bin.7z'
+    replaceExistingArchive: true
+
+# Delete Debug Console
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/SSB.DebugConsole.*'
+
+# Create release_svc.7z file
+# This contains base binaries for the Win32 service.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_svc.7z'
+    replaceExistingArchive: true
+
+# Delete Service and cfg template
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(BinariesDirectory)'
+    Contents: '**/{SSB.Service,cfg.template}.*'
+
+# Create release_lib.7z file
+# This contains library binaries only.
+- task: ArchiveFiles@2
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    rootFolderOrFile: '$(BinariesDirectory)'
+    includeRootFolder: false
+    archiveType: '7z'
+    sevenZipCompression: 'maximum'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/release_lib.7z'
+    replaceExistingArchive: true
+
+# Publish artifacts
+- task: PublishBuildArtifacts@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: '$(Build.SourceVersion)'
+    publishLocation: 'FilePath'
+    TargetPath: '$(FileSharePath)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: $(Build.Repository.Name)
+
+# Cleanup Artifact Staging Directory
+- task: DeleteFiles@1
+  condition: contains(variables['Build.SourceVersionMessage'], '[BUILD]')
+  inputs:
+    SourceFolder: '$(Build.ArtifactStagingDirectory)'
+    Contents: '**/*'
