@@ -35,7 +35,7 @@ namespace SSB.Core
 
             while (TrueRPM < RPMCap)
             {
-                for (int i = 0; i < 24; i++) RPMCap = RPMCaps[i];
+                for (int i = 0; TrueRPM < RPMCap; i++) RPMCap = RPMCaps[i];
             }    
             return RPMCap;
         }
@@ -62,17 +62,12 @@ namespace SSB.Core
             return ((Value - Range.Min) / (Range.Max - Range.Min));
         }
 
-        public static List<int> RPMCaps = new List<int>(){ 3960 , 1980 , 1320 , 990 , 792 , 660 , 565 , 495 , 440 , 396 , 360 , 264 , 220 , 198 , 180 , 165 , 132 , 120 , 110 , 99 , 90 , 88 , 72 };
+        public static int[] RPMCaps = new int[] { 3960 , 1980 , 1320 , 990 , 792 , 660 , 565 , 495 , 440 , 396 , 360 , 264 , 220 , 198 , 180 , 165 , 132 , 120 , 110 , 99 , 90 , 88 , 72, 66 };
 
         public struct StatRange
         {
             public int Min { get; set; }
             public int Max { get; set; }
-
-            public StatRange(int _Min, int _Max)
-            {
-                Min = _Min; Max = _Max;
-            }
         }
     }
 }
