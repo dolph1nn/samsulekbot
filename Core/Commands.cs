@@ -27,8 +27,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using SSB.Core.Database;
-using Microsoft.CodeAnalysis;
-using System.Reflection;
 
 namespace SSB.DiscordBot
 {
@@ -65,10 +63,16 @@ namespace SSB.DiscordBot
                 .AddOption("file", ApplicationCommandOptionType.Attachment, "attachment image", isRequired: false)
                 .WithDefaultMemberPermissions(GuildPermission.Administrator)
                 .WithContextTypes(InteractionContextType.Guild & InteractionContextType.PrivateChannel);
+            SlashCommandBuilder AddStickerCommand = new SlashCommandBuilder()
+                .WithName("addsticker")
+                .WithDescription("Adds stickers easily")
+                .AddOption("guild", ApplicationCommandOptionType.String, "The guild to make the sticker in (default: this one)", isRequired: false)
+                .AddOption("name", ApplicationCommandOptionType.String, "name of the sticker", isRequired: true)
+                .AddOption("url", ApplicationCommandOptionType.String, "url of the sticker", isRequired: false);
             Console.WriteLine("Before Create");
             try
             {
-                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(EvalCommand.Build());
+                await DiscordHandler.SocketClient.Rest.CreateGlobalCommand(AddStickerCommand.Build());
 
             }
             catch (HttpException exception)
@@ -101,6 +105,9 @@ namespace SSB.DiscordBot
                     break;
                 case "addemote":
                     await AddEmoteURL(command);
+                    break;
+                case "addsticker":
+                    await AddStickerURL(command);
                     break;
                 default:
                     break;
@@ -234,6 +241,14 @@ namespace SSB.DiscordBot
             await command.ModifyOriginalResponseAsync(msg => msg.Content = "Added emote " + (string)args["name"].Value + " from URL " + (string)args["url"].Value);
         }
 
+        private static async Task AddStickerURL(SocketSlashCommand command)
+        {
+            await command.DeferAsync();
+            Dictionary<string, SocketSlashCommandDataOption> args = command.Data.Options.ToDictionary(arg => arg.Name);
+            await DiscordHandler.SocketClient.GetGuild((ulong)command.GuildId).CreateStickerAsync((string)args["name"].Value, new Image(new MemoryStream(new WebClient().DownloadData((string)args["url"].Value))), null);
+            await command.ModifyOriginalResponseAsync(msg => msg.Content = "Added sticker " + (string)args["name"].Value + " from URL " + (string)args["url"].Value);
+        }
+
         /// <summary>
         /// THIS IS A VERY DANGEROUS COMMAND/METHOD!!!
         /// This is the Method for the Evaulate command.
@@ -278,7 +293,6 @@ namespace SSB.DiscordBot
                 await command.ModifyOriginalResponseAsync(msg => msg.Content = "WARNING: You have attempted to use a dangerous command only intended for developers." +
                     "I'll give you the benefit of the doubt that this was a genuine mistake. If you do this again, you will permanently lose access to ALL of my commands.");
             }
-
         }
     }
 
